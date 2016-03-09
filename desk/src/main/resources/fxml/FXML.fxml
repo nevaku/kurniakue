@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.kurniakue.trxreader.ui.FXMLController">
+    <stylesheets>
+        <URL value="@/styles/fxml.css" />
+    </stylesheets>
+   <children>
+      <Pane layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="200.0">
+         <children>
+            <Button fx:id="btnOK" layoutX="134.0" layoutY="161.0" mnemonicParsing="false" onAction="#saveCustomer" text="OK" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

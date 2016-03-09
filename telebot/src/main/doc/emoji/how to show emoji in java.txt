@@ -1,0 +1,11 @@
+emoji is unicode character.
+embed in string by four digit of \uXXXX character.
+example:
+ball emoji: 26BD in java code:
+  String ballEmoji = "\u26BD";
+
+banana emoji: D83CDF4C in java code:
+  String bananaEmoji = "\uD83C\uDF4C";
+
+korean flag emoji: D83CDDF0D83CDDF7 in java code:
+  String koreanFlagEmoji = "\uD83C\uDDF0\uD83C\uDDF7";
