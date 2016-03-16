@@ -28,9 +28,14 @@ public class RecapitulationHandler extends UpdateHandler {
         return show();
     });
     
-    public final Command cmd_yes = new Command(this, "/ya", () -> {
+    public final Command cmd_yes_calculate = new Command(this, "/ya", () -> {
         confirm = true;
         return calculate();
+    });
+    
+    public final Command cmd_yes_upgrade = new Command(this, "/ya", () -> {
+        confirm = true;
+        return upgradeTrx_addAccounts();
     });
     
     public final Command cmd_no = new Command(this, "/tidak", () -> {
@@ -65,12 +70,18 @@ public class RecapitulationHandler extends UpdateHandler {
         return calculate();
     });
     
+    public final Command cmd_upgrade = new Command(this, "/upgrade", () -> {
+        return upgradeTrx_addAccounts();
+    });
+    
     private final Command[] rekapMenu = {
         cmd_bill, cmd_deposit, cmd_all,
         cmd_expense, cmd_income, cmd_balance,
-        cmd(C.Home), cmd_calculate};
+        cmd_calculate, cmd_upgrade, cmd_nihil,
+        cmd(C.Home), cmd_nihil, cmd_nihil};
     
-    private final Command[] confirmMenu = {cmd_no, cmd_yes};
+    private final Command[] confirmMenuToCalculate = {cmd_no, cmd_yes_calculate};
+    private final Command[] confirmMenuToUpgrade = {cmd_no, cmd_yes_upgrade};
 
     public RecapitulationHandler() {
         activeCommands = rekapMenu;
@@ -82,6 +93,7 @@ public class RecapitulationHandler extends UpdateHandler {
     }
     
     private boolean show() {
+        activeCommands = rekapMenu;
         getReplier().addLine("Silakan").keyboard(cmdOf(rekapMenu)).send();
         return true;
     }
@@ -179,8 +191,9 @@ public class RecapitulationHandler extends UpdateHandler {
         Replier replier = getReplier();
         
         if (!confirm) {
+            activeCommands = confirmMenuToCalculate;
             replier.addLine("Anda yakin akan menghitung ulang rekapitulasi?")
-                    .keyboard(cmdOf(confirmMenu))
+                    .keyboard(cmdOf(confirmMenuToCalculate))
                     .send();
             return true;
         }
@@ -188,6 +201,26 @@ public class RecapitulationHandler extends UpdateHandler {
         new Transaction().recapitulate(DateInfo.getDateInfo(Calendar.getInstance()));
         
         replier.add("Rekapitulasi selesai.");
+        confirm = false;
+        show();
+        return true;
+    }
+    
+    private boolean upgradeTrx_addAccounts() {
+        Replier replier = getReplier();
+        
+        if (!confirm) {
+            activeCommands = confirmMenuToUpgrade;
+            replier.addLine("Anda yakin akan mengupgrade? ")
+                    .addLine("Akan ditambahkan account yang terlibat.")
+                    .keyboard(cmdOf(confirmMenuToUpgrade))
+                    .send();
+            return true;
+        }
+        
+        new Transaction().upgradeTrx_addAccounts(DateInfo.getDateInfo(Calendar.getInstance()));
+        
+        replier.add("Upgrade selesai.").send();
         confirm = false;
         show();
         return true;

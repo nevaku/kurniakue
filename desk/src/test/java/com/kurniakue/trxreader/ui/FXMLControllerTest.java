@@ -53,7 +53,7 @@ public class FXMLControllerTest {
         instance.initialize(url, rb);
     }
     
-    @Test
+    //@Test
     public void testForm() throws IOException{
         Application.launch(FXMLController.class, new String[0]);
     }

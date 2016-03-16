@@ -5,6 +5,7 @@
  */
 package com.kurniakue.telebot;
 
+import com.kurniakue.common.Common;
 import com.kurniakue.data.DbProp;
 import com.kurniakue.data.KurniaKueDb;
 import com.kurniakue.data.TheConfig;
@@ -23,6 +24,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import com.kurniakue.data.DbProp.N;
+import java.util.Date;
 
 /**
  *
@@ -39,7 +41,12 @@ public class Main {
     public static void main(String[] args) throws Exception {
         started.set(true);
         config = KurniaKueDb.getConfig();
-        config.load("c:/harun/cfg/telebot.conf");
+        if (args.length == 0) {
+            args = new String[]{"c:/harun/cfg/telebot.conf"};
+        }
+        String configPath = args[0];
+        System.out.println("Config path: " + configPath);
+        config.load(configPath);
         startBotting();
         waitForExit();
         disconnectDb();
@@ -74,7 +81,7 @@ public class Main {
             try {
                 updatesResponse = bot.getUpdates(offset, config.getInt("UpdatePeriod"));
             } catch (Exception e) {
-                System.out.println(e.getMessage());
+                System.out.println(Common.formatDate(new Date(), "yyyyMMddHHmmss.SSS") + ":" + e.getMessage());
                 continue;
             }
 
@@ -86,10 +93,11 @@ public class Main {
                 }
 
                 List<Update> updates = updatesResponse.updates();
-                System.out.println("Number of updates: " + updates.size());
+                System.out.println(Common.formatDate(new Date(), "yyyyMMddHHmmss.SSS") + ":" + "Number of updates: " + updates.size());
 
                 for (Update update : updates) {
                     offset = update.updateId() + 1;
+                    System.out.println(Common.formatDate(new Date(), "yyyyMMddHHmmss.SSS") + ":" + offset);
                     DbProp.setProp(N.offset, offset);
                     System.out.println(update);
                     System.out.println("--------------------------------------------------");

@@ -28,7 +28,8 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
         TransactionID, Date, Category, Subcategory, Description,
         CustomerID, CustomerName,
         ItemNo, ItemName, Price,
-        Count, Amount, DCFlag;
+        Count, Amount, DCFlag,
+        TrxAccounts;
     }
 
     public enum V implements EnumField {
@@ -120,26 +121,21 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
         Document group = new Document()
                 .append(F._id.name(), "$CustomerName")
                 .append(V.Rekap.name(), new Document("$sum",
-                                new Document("$multiply", asList("$Amount", "$DCFlag"))));
+                        new Document("$multiply", asList("$Amount", "$DCFlag"))));
 
         AggregateIterable<Document> iterable = getCollection()
                 .aggregate(asList(
-                                new Document("$match", filter),
-                                new Document("$group", group)));
+                        new Document("$match", filter),
+                        new Document("$group", group)));
 
         List<Record> list = new ArrayList<>();
         for (Document document : iterable) {
             list.add(new Record(document));
         }
 
-        Collections.sort(list, new Comparator<Record>() {
-
-            @Override
-            public int compare(Record trx1, Record trx2) {
-                return trx1.getString(F._id).compareTo(
-                        trx2.getString(F._id));
-            }
-        });
+        Collections.sort(list, 
+                (Record trx1, Record trx2) -> trx1.getString(F._id).compareTo(
+                trx2.getString(F._id)));
 
         return list;
     }
@@ -149,32 +145,26 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
                 .append(F.Date.name(),
                         new Document("$regex", yearMonth + ".*")
                         .append("$options", "i"))
-                .append(F.ItemNo.name(), CASH)
-                ;
+                .append(F.ItemNo.name(), CASH);
 
         Document group = new Document()
                 .append(F._id.name(), "$CustomerName")
                 .append(V.Rekap.name(), new Document("$sum",
-                                new Document("$multiply", asList("$Amount", "$DCFlag"))));
+                        new Document("$multiply", asList("$Amount", "$DCFlag"))));
 
         AggregateIterable<Document> iterable = getCollection()
                 .aggregate(asList(
-                                new Document("$match", filter),
-                                new Document("$group", group)));
+                        new Document("$match", filter),
+                        new Document("$group", group)));
 
         List<Record> list = new ArrayList<>();
         for (Document document : iterable) {
             list.add(new Record(document));
         }
 
-        Collections.sort(list, new Comparator<Record>() {
-
-            @Override
-            public int compare(Record trx1, Record trx2) {
-                return trx1.getString(F._id).compareTo(
-                        trx2.getString(F._id));
-            }
-        });
+        Collections.sort(list, 
+                (Record trx1, Record trx2) -> trx1.getString(F._id).compareTo(
+                trx2.getString(F._id)));
 
         return list;
     }
@@ -188,10 +178,10 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
             if (amount == 0) {
                 continue;
             }
-            
+
             Customer customer = new Customer().load(record.getString(F._id));
             Item item = new Item().load(RKAP);
-            
+
             int dcFlag;
             String itemName;
             String lastYearMonth = dateInfo.getString(DateInfo.F.LastYearMonth);
@@ -203,11 +193,11 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
                 dcFlag = 1;
                 itemName = "Saldo bulan " + lastYearMonth;
             }
-            
+
             Transaction trx = new Transaction();
             int trxId = DbProp.getAndInc(N.LastTransactionID);
             trx.put(F.TransactionID, trxId);
-            
+
             String date = dateInfo.getString(DateInfo.F.ThisYearMonth) + "-01";
             trx.put(F.Date, date);
 
@@ -233,5 +223,36 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
                 .append(F.ItemNo.name(), RKAP);
 
         return delete(filter);
+    }
+
+    /**
+     * Add account involved in each transaction. Add new Fields: Accounts in
+     * transactions record in Accounts field there is list of Accounts in each
+     * account, there are fields: AccountNo, Amount, Flag Flag: Debit/Credit Sum
+     * of (Amount*Flag) of Accounts should equal to zero.
+     *
+     * @param dateInfo
+     */
+    public void upgradeTrx_addAccounts(DateInfo dateInfo) {
+        String yearMonth = dateInfo.getString(DateInfo.F.ThisYearMonth);
+        Document filter = new Document()
+                .append(F.Date.name(),
+                        new Document("$regex", yearMonth + ".*")
+                        .append("$options", "i"));
+        Document sort = new Document(F.Date.name(), 1);
+
+        List<Transaction> list = Transaction.loadList(new Transaction(), filter, sort);
+
+        for (Transaction transaction : list) {
+            Object obj = transaction.get(F.TrxAccounts);
+            if (obj != null) {
+                continue;
+            }
+
+            List<Account> trxAccounts = new ArrayList<>();
+            if (transaction.getInt(F.ItemNo) == CASH) {
+                
+            }
+        }
     }
 }

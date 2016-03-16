@@ -81,7 +81,7 @@ public class UpdateHandler {
     private static final Map<String, Map<String, Class<? extends UpdateHandler>>> handlerByUser
             = new HashMap<String, Map<String, Class<? extends UpdateHandler>>>() {
                 {
-                    put("Admin", UpdateHandler.registeredAdminHandler);
+                    put("HarunMip", UpdateHandler.registeredAdminHandler);
                 }
             };
 

@@ -40,7 +40,7 @@ public class customerFormTest {
     /**
      * Test of main method, of class customerForm.
      */
-    @Test
+    //@Test
     public void testMain() {
         System.out.println("main");
         String[] args = null;
