@@ -218,7 +218,9 @@ public class RecapitulationHandler extends UpdateHandler {
             return true;
         }
         
-        new Transaction().upgradeTrx_addAccounts(DateInfo.getDateInfo(Calendar.getInstance()));
+        new Transaction().upgradeTrx_addAccounts(
+                DateInfo.getDateInfo(Calendar.getInstance()),
+                0, "", 0, "");
         
         replier.add("Upgrade selesai.").send();
         confirm = false;

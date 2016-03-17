@@ -131,7 +131,7 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
             list.add(new Record(document));
         }
 
-        Collections.sort(list, 
+        Collections.sort(list,
                 (Record trx1, Record trx2) -> trx1.getString(F._id).compareTo(
                 trx2.getString(F._id)));
 
@@ -160,7 +160,7 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
             list.add(new Record(document));
         }
 
-        Collections.sort(list, 
+        Collections.sort(list,
                 (Record trx1, Record trx2) -> trx1.getString(F._id).compareTo(
                 trx2.getString(F._id)));
 
@@ -230,8 +230,19 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
      * of (Amount*Flag) of Accounts should equal to zero.
      *
      * @param dateInfo
+     * @param userAccountNo
+     * @param userAccountName
+     * @param supplierAccountNo
+     * @param supplierAccountName
      */
-    public void upgradeTrx_addAccounts(DateInfo dateInfo) {
+    public void upgradeTrx_addAccounts(DateInfo dateInfo,
+            long userAccountNo, String userAccountName,
+            long supplierAccountNo, String supplierAccountName) {
+        
+        if (userAccountNo == 0) {
+            return;
+        }
+        
         String yearMonth = dateInfo.getString(DateInfo.F.ThisYearMonth);
         Document filter = new Document()
                 .append(F.Date.name(),
@@ -240,6 +251,7 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
         Document sort = new Document(F.Date.name(), 1);
 
         List<Transaction> list = Transaction.loadList(new Transaction(), filter, sort);
+        TrxAccount trxaccount;
 
         for (Transaction transaction : list) {
             Object obj = transaction.get(F.TrxAccounts);
@@ -249,20 +261,43 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
 
             List<TrxAccount> trxAccounts = new ArrayList<>();
             if (CASH.equals(transaction.getString(F.ItemNo))) {
-                TrxAccount trxaccount;
-                
                 // add customer acccount as credit
+                // Customer- (kurang uang)
                 trxaccount = new TrxAccount();
                 long accountNo = Tool.idToNo(transaction.getString(F.CustomerID));
                 trxaccount.put(TrxAccount.F.AccountNo, accountNo);
                 trxaccount.put(TrxAccount.F.AccountName, transaction.getString(F.CustomerName));
                 trxaccount.put(TrxAccount.F.Amount, transaction.getLong(F.Amount));
                 trxaccount.put(TrxAccount.F.DCFlag, CREDIT);
-                // Harun+ (dapat uang)
-                // Customer- (kurang uang)
-            } else{
-                // Dina- (kurang barang)
+                trxAccounts.add(trxaccount);
+
+                // add user acccount as debbit
+                // User+ (dapat uang)
+                trxaccount = new TrxAccount();
+                trxaccount.put(TrxAccount.F.AccountNo, userAccountNo);
+                trxaccount.put(TrxAccount.F.AccountName, userAccountName);
+                trxaccount.put(TrxAccount.F.Amount, transaction.getLong(F.Amount));
+                trxaccount.put(TrxAccount.F.DCFlag, DEBBIT);
+                trxAccounts.add(trxaccount);
+            } else {
+                // add suppier acccount as credit
+                // Supplier- (kurang barang)
+                trxaccount = new TrxAccount();
+                trxaccount.put(TrxAccount.F.AccountNo, supplierAccountNo);
+                trxaccount.put(TrxAccount.F.AccountName, supplierAccountName);
+                trxaccount.put(TrxAccount.F.Amount, transaction.getLong(F.Amount));
+                trxaccount.put(TrxAccount.F.Amount, transaction.getLong(F.Amount));
+                trxaccount.put(TrxAccount.F.DCFlag, CREDIT);
+                trxAccounts.add(trxaccount);
+
+                // add Customer acccount as debbit
                 // Customer+ (dapat barang)
+                trxaccount = new TrxAccount();
+                long accountNo = Tool.idToNo(transaction.getString(F.CustomerID));
+                trxaccount.put(TrxAccount.F.AccountNo, accountNo);
+                trxaccount.put(TrxAccount.F.AccountName, transaction.getString(F.CustomerName));
+                trxaccount.put(TrxAccount.F.DCFlag, DEBBIT);
+                trxAccounts.add(trxaccount);
             }
         }
     }

@@ -40,7 +40,7 @@ public class ToolTest {
     /**
      * Test of isBlank method, of class Tool.
      */
-    @org.junit.Test
+    //@org.junit.Test
     public void testIsBlank() {
         System.out.println("isBlank");
         String string = "";
@@ -54,7 +54,7 @@ public class ToolTest {
     /**
      * Test of isExists method, of class Tool.
      */
-    @org.junit.Test
+    //@org.junit.Test
     public void testIsExists() {
         System.out.println("isExists");
         String string = "";
@@ -68,7 +68,7 @@ public class ToolTest {
     /**
      * Test of neo method, of class Tool.
      */
-    @org.junit.Test
+    //@org.junit.Test
     public void testNeo() {
         System.out.println("neo");
         Object expResult = null;
@@ -81,7 +81,7 @@ public class ToolTest {
     /**
      * Test of getMember method, of class Tool.
      */
-    @org.junit.Test
+    //@org.junit.Test
     public void testGetMember() {
         System.out.println("getMember");
         String memberName = "";
@@ -95,7 +95,7 @@ public class ToolTest {
     /**
      * Test of parseArguments method, of class Tool.
      */
-    @org.junit.Test
+    //@org.junit.Test
     public void testParseArguments() {
         System.out.println("parseArguments");
         String text = "";
