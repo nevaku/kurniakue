@@ -6,22 +6,17 @@
 package com.kurniakue.data;
 
 import com.kurniakue.common.EnumField;
-import static com.kurniakue.data.KurniaKueDb.getDbCollection;
-import com.mongodb.client.MongoCollection;
-import org.bson.Document;
 
 /**
  *
  * @author Harun Al Rasyid
  */
-public class Account extends Record<Transaction> {
+public class TrxAccount extends Record<Transaction> {
     
     
     public enum F implements EnumField {
-        AccountNo, AccountName, AccountGroup
+        AccountNo, AccountName, Amount, DCFlag
     }
-
-    public static final String COLLECTION_NAME = "accounts";
 
     @Override
     public EnumField getKey() {
@@ -32,16 +27,12 @@ public class Account extends Record<Transaction> {
     public String toString() {
         return "{" + getString(F.AccountNo) + ", "
                 + getString(F.AccountName) + ", "
-                + getString(F.AccountGroup) + "}";
+                + getString(F.Amount) + ", "
+                + getString(F.DCFlag) + "}";
     }
 
     @Override
     public Transaction getNoRecord() {
         return null;
-    }
-
-    @Override
-    public MongoCollection<Document> getCollection() {
-        return getDbCollection(COLLECTION_NAME);
     }
 }

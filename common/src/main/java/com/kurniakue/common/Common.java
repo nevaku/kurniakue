@@ -43,6 +43,11 @@ public class Common {
     public static final String accountsDir = driveDir + "/Accounts";
     public static final String extension = "xhtml";
     public static final String csvDir = driveDir + "/expensemanager/csv";
+    /**
+     * make it 6 words as CREDIT
+     */
+    public static int DEBBIT = +1;
+    public static int CREDIT = -1;
 
     public enum PrintMode {
 
@@ -187,6 +192,5 @@ public class Common {
             throw new RuntimeException(e);
         }
     }
-
 
 }

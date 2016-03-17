@@ -5,6 +5,7 @@
  */
 package com.kurniakue.common;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,5 +58,19 @@ public class Tool {
         }
         
         return retlist.toArray(new String[0]);
+    }
+
+    public static long idToNo(String id) {
+        ByteBuffer bb = ByteBuffer.allocate(16);
+        bb.put(id.getBytes());
+        bb.put(new byte[8]);
+        bb.rewind();
+        return bb.getLong();
+    }
+
+    public static String noToId(long no) {
+        ByteBuffer bb = ByteBuffer.allocate(Long.BYTES);
+        bb.putLong(no);
+        return new String( bb.array()).trim();
     }
 }

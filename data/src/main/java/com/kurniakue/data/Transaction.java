@@ -1,20 +1,19 @@
 package com.kurniakue.data;
 
-import static com.kurniakue.common.Common.CASH;
-import static com.kurniakue.common.Common.RKAP;
+import static com.kurniakue.common.Common.*;
 import com.kurniakue.common.EnumField;
+import com.kurniakue.common.Tool;
 import com.kurniakue.data.DbProp.N;
-import static com.kurniakue.data.KurniaKueDb.getDbCollection;
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import java.util.ArrayList;
 import static java.util.Arrays.asList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import org.bson.Document;
+import static com.kurniakue.data.KurniaKueDb.getDbCollection;
 
 /**
  *
@@ -38,7 +37,6 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
     }
 
     public static final String COLLECTION_NAME = "transactions";
-    public static final Transaction NO_TRANSACTION = new Transaction();
 
     public Transaction() {
 
@@ -61,7 +59,7 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
                 + getString(F.CustomerName) + ", "
                 + getString(F.ItemNo) + ", "
                 + getString(F.ItemName) + ", "
-                + getString(F.Amount) + "}\n";
+                + getString(F.Amount) + "}";
     }
 
     @Override
@@ -246,12 +244,25 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
         for (Transaction transaction : list) {
             Object obj = transaction.get(F.TrxAccounts);
             if (obj != null) {
-                continue;
+                //continue;
             }
 
-            List<Account> trxAccounts = new ArrayList<>();
-            if (transaction.getInt(F.ItemNo) == CASH) {
+            List<TrxAccount> trxAccounts = new ArrayList<>();
+            if (CASH.equals(transaction.getString(F.ItemNo))) {
+                TrxAccount trxaccount;
                 
+                // add customer acccount as credit
+                trxaccount = new TrxAccount();
+                long accountNo = Tool.idToNo(transaction.getString(F.CustomerID));
+                trxaccount.put(TrxAccount.F.AccountNo, accountNo);
+                trxaccount.put(TrxAccount.F.AccountName, transaction.getString(F.CustomerName));
+                trxaccount.put(TrxAccount.F.Amount, transaction.getLong(F.Amount));
+                trxaccount.put(TrxAccount.F.DCFlag, CREDIT);
+                // Harun+ (dapat uang)
+                // Customer- (kurang uang)
+            } else{
+                // Dina- (kurang barang)
+                // Customer+ (dapat barang)
             }
         }
     }
