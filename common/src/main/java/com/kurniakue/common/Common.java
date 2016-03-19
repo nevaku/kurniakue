@@ -12,9 +12,12 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -61,6 +64,37 @@ public class Common {
 
     public static EnumSet<PrintMode> printModes = EnumSet.allOf(PrintMode.class);
     public static List<String> customersToProcess = new ArrayList<>();
+    
+    /**
+     * 
+     * @deprecated should be in DB
+     */
+    @Deprecated
+    public static final Map<String, String> GroupMember = new HashMap<String, String>() {
+        {
+            put("HarunMip", "Admin");
+            put("DinaKS", "Admin,Supplier");
+        }
+    };
+    
+    /**
+     * 
+     * @deprecated should be placed to DBProp
+     */
+    @Deprecated
+    public static final List<String> GROUP_CUSTOMER = Collections.singletonList("Customer");
+    
+    /**
+     * 
+     * @deprecated should be in DBs
+     */
+    @Deprecated
+    public static final Map<String, String> MemberIdOf = new HashMap<String, String>() {
+        {
+            put("HarunMip", "HS005");
+            put("DinaKS", "DR001");
+        }
+    };
 
     public enum Argument {
 
@@ -124,6 +158,11 @@ public class Common {
     public static String formatNumber(long value) {
         String pattern = "#,##0";
         DecimalFormat myFormatter = new DecimalFormat(pattern);
+        return myFormatter.format(value);
+    }
+
+    public static String formatNumber(long value, String format) {
+        DecimalFormat myFormatter = new DecimalFormat(format);
         return myFormatter.format(value);
     }
 

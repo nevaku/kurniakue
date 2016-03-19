@@ -5,6 +5,7 @@
  */
 package com.kurniakue.telebot;
 
+import static com.kurniakue.common.Common.*;
 import com.kurniakue.common.Tool;
 import com.kurniakue.data.Record;
 import com.kurniakue.telebot.UpdateHandler.C;
@@ -13,7 +14,9 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -67,6 +70,24 @@ public class UpdateContext {
     public String getUserName() {
         return userName;
     }
+    
+    private List<String> userGroups;
+
+    public List<String> getUserGroups() {
+        return userGroups;
+    }
+    
+    private String userMemberId;
+
+    public String getUserMemberId() {
+        return userMemberId;
+    }
+    
+    private long userAccountNo;
+
+    public long getUserAccountNo() {
+        return userAccountNo;
+    }
 
     private String text;
 
@@ -92,7 +113,7 @@ public class UpdateContext {
 
     public UpdateContext setInitialInfo(TelegramBot bot, Update update) {
         setInfo(bot, update);
-        registeredHandler = UpdateHandler.createRegisteredHandler(update);
+        registeredHandler = UpdateHandler.createRegisteredHandler(update, this);
         activeHandler = registeredHandler.get(C.Help.cmd);
         System.out.println("Active Handler: " + activeHandler.getClass().getSimpleName());
 
@@ -106,9 +127,19 @@ public class UpdateContext {
         message = update.message();
         chat = message.chat();
         userName = chat.username();
+        userGroups = Arrays.asList(GroupMember.get(userName).split(","));
+        if (userGroups == null) {
+            userGroups = GROUP_CUSTOMER;
+        }
+        userMemberId = MemberIdOf.get(userName);
+        userAccountNo = Tool.idToNo(userMemberId);
         text = message.text();
 
         return this;
+    }
+    
+    public boolean isMemberOf(String groupMember) {
+        return userGroups.contains(groupMember);
     }
 
     public static UpdateContext get(TelegramBot bot, Update update) {

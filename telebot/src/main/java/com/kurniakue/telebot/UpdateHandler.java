@@ -16,6 +16,7 @@ import com.pengrad.telegrambot.model.Update;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -78,10 +79,11 @@ public class UpdateHandler {
                 }
             };
 
-    private static final Map<String, Map<String, Class<? extends UpdateHandler>>> handlerByUser
+    private static final Map<String, Map<String, Class<? extends UpdateHandler>>> handlerByUserGroup
             = new HashMap<String, Map<String, Class<? extends UpdateHandler>>>() {
                 {
-                    put("HarunMip", UpdateHandler.registeredAdminHandler);
+                    put("Admin", UpdateHandler.registeredAdminHandler);
+                    put("Customer", UpdateHandler.registeredUserHandlerClass);
                 }
             };
 
@@ -89,12 +91,13 @@ public class UpdateHandler {
         return true;
     });
 
-    public static Map<String, UpdateHandler> createRegisteredHandler(Update update) {
+    public static Map<String, UpdateHandler> createRegisteredHandler(
+            Update update, UpdateContext context) {
         if (!validateMandatory(update)) {
             return null;
         }
 
-        Map<String, Class<? extends UpdateHandler>> registeredHandlerClass;
+        Map<String, Class<? extends UpdateHandler>> registeredHandlerClass = null;
 
         Message message = update.message();
         Chat chat = message.chat();
@@ -103,8 +106,13 @@ public class UpdateHandler {
             return createHandlerListFrom(UpdateHandler.registeredUserHandlerClass);
         }
 
-        String username = chat.username();
-        registeredHandlerClass = handlerByUser.get(username);
+        List<String> userGroups = context.getUserGroups();
+        for (String userGroup : userGroups) {
+            registeredHandlerClass = handlerByUserGroup.get(userGroup);
+            if (registeredHandlerClass != null) {
+                break;
+            }
+        }
 
         if (registeredHandlerClass == null) {
             return createHandlerListFrom(UpdateHandler.registeredUserHandlerClass);

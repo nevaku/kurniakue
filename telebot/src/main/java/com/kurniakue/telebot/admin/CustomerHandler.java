@@ -5,6 +5,7 @@
  */
 package com.kurniakue.telebot.admin;
 
+import com.kurniakue.common.Common;
 import com.kurniakue.common.EnumField;
 import com.kurniakue.data.Customer;
 import com.kurniakue.telebot.Command;
@@ -26,7 +27,8 @@ public class CustomerHandler extends UpdateHandler {
 
         Back("/balik"),
         Next("/lanjut"),
-        Home("/awal");
+        Home("/awal"),
+        All("/semua");
         public String cmd;
         public String fun;
 
@@ -113,29 +115,39 @@ public class CustomerHandler extends UpdateHandler {
     }
 
     public boolean loadCurrentCustomerList() {
+        return loadCurrentCustomerList(false);
+    }
+
+    public boolean loadCurrentCustomerList(boolean showAll) {
         Replier replier = getReplier();
         List<Customer> customerList = getList();
         
         String[] customers;
         
         if (customerList.size() > maxListCount) {
-            customers = new String[maxListCount + 3];
+            customers = new String[maxListCount + 4];
             Arrays.fill(customers, "");
             customers[maxListCount] = C.Home.cmd;
             customers[maxListCount + 1] = C.Back.cmd;
             customers[maxListCount + 2] = C.Next.cmd;
+            customers[maxListCount + 3] = C.All.cmd;
         } else {
             int size = customerList.size();
             int mod = (size % 3);
             if (mod > 0) {
                 mod = 3 - mod;
             }
-            customers = new String[size + mod + 1];
+            customers = new String[size + mod + 2];
             Arrays.fill(customers, "");
-            customers[customers.length - 1] = C.Home.cmd;
+            customers[customers.length - 2] = C.Home.cmd;
+            customers[customers.length - 1] = C.All.cmd;
         }
         
-        replier.add("silakan pilih ")
+        if (showAll) {
+            showAllCustomers();
+        }
+        
+        replier.addLine("silakan pilih ")
                 .add(getListOffset() + 1).add(" - ")
                 .add(getListOffset() + maxListCount)
                 .add(" dari " + customerList.size());
@@ -152,6 +164,18 @@ public class CustomerHandler extends UpdateHandler {
         replier.send();
         
         return true;
+    }
+    
+    public void showAllCustomers() {
+        Replier replier = getReplier();
+        List<Customer> customerList = getList();
+        
+        int i = 0;
+        for (Customer customer : customerList) {
+            replier.addLine(Common.formatNumber(i += 1, "000-"))
+                    .add(customer.getString(Customer.F.CustomerID))
+                    .add(":").add(customer.getString(Customer.F.CustomerName));
+        }
     }
     
     public boolean balik() {
@@ -176,6 +200,10 @@ public class CustomerHandler extends UpdateHandler {
         
         setListOffset(newOffset);
         return loadCurrentCustomerList();
+    }
+    
+    public boolean semua() {
+        return loadCurrentCustomerList(true);
     }
 
 //    @Override
