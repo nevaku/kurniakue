@@ -10,6 +10,7 @@ import com.kurniakue.data.DateInfo;
 import com.kurniakue.data.Record;
 import com.kurniakue.data.Transaction;
 import com.kurniakue.telebot.Command;
+import com.kurniakue.telebot.UpdateContext;
 import com.kurniakue.telebot.UpdateHandler;
 import com.pengrad.telegrambot.Replier;
 import java.util.Calendar;
@@ -218,9 +219,12 @@ public class RecapitulationHandler extends UpdateHandler {
             return true;
         }
         
-        new Transaction().upgradeTrx_addAccounts(
+        UpdateContext context = getContext();
+        
+        Transaction.upgradeTrx_addAccounts(
                 DateInfo.getDateInfo(Calendar.getInstance()),
-                0, "", 0, "");
+                context.getUserAccountNo(), context.getMemberName(), 
+                context.getSupplierAccountNo(), context.getSupplierName());
         
         replier.add("Upgrade selesai.").send();
         confirm = false;

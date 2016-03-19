@@ -213,7 +213,8 @@ public class Record<T extends Record> extends Document {
     }
 
     public T update() {
-        getCollection().updateOne(getFilter(), new Document("$set", new Document(this)));
+        getCollection().updateOne(getFilter(), 
+                new Document("$set", new Document(this)));
         return (T) this;
     }
 }

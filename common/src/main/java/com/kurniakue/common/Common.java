@@ -84,6 +84,8 @@ public class Common {
     @Deprecated
     public static final List<String> GROUP_CUSTOMER = Collections.singletonList("Customer");
     
+    public static final String HARUN_MEMBER_ID = "HS005";
+    public static final String DINA_MEMBER_ID = "DR001";
     /**
      * 
      * @deprecated should be in DBs
@@ -91,8 +93,8 @@ public class Common {
     @Deprecated
     public static final Map<String, String> MemberIdOf = new HashMap<String, String>() {
         {
-            put("HarunMip", "HS005");
-            put("DinaKS", "DR001");
+            put("HarunMip", HARUN_MEMBER_ID);
+            put("DinaKS", DINA_MEMBER_ID);
         }
     };
 

@@ -53,13 +53,25 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
 
     @Override
     public String toString() {
-        return "{" + getString(F.TransactionID) + ", "
-                + getString(F.Date) + ", "
-                + getString(F.CustomerID) + ", "
-                + getString(F.CustomerName) + ", "
-                + getString(F.ItemNo) + ", "
-                + getString(F.ItemName) + ", "
-                + getString(F.Amount) + "}";
+        StringBuilder sb = new StringBuilder(1000);
+        sb.append("{").append(getString(F.TransactionID)).append(", ");
+        sb.append(getString(F.Date)).append(", ");
+        sb.append(getString(F.CustomerID)).append(", ");
+        sb.append(getString(F.CustomerName)).append(", ");
+        sb.append(getString(F.ItemNo)).append(", ");
+        sb.append(getString(F.ItemName)).append(", ");
+        sb.append(getString(F.Amount)).append(", ");
+        
+        List<TrxAccount> trxAccounts = (List<TrxAccount>) get(F.TrxAccounts);
+        if (trxAccounts != null) {
+            sb.append("[");
+            for (TrxAccount trxAccount : trxAccounts) {
+                sb.append(trxAccount.toString()).append(", ");
+            }
+            sb.append("]");
+        }
+        sb.append("}");
+        return sb.toString();
     }
 
     @Override
@@ -235,14 +247,14 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
      * @param supplierAccountNo
      * @param supplierAccountName
      */
-    public void upgradeTrx_addAccounts(DateInfo dateInfo,
+    public static void upgradeTrx_addAccounts(DateInfo dateInfo,
             long userAccountNo, String userAccountName,
             long supplierAccountNo, String supplierAccountName) {
-        
+
         if (userAccountNo == 0) {
             return;
         }
-        
+
         String yearMonth = dateInfo.getString(DateInfo.F.ThisYearMonth);
         Document filter = new Document()
                 .append(F.Date.name(),
@@ -252,14 +264,18 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
 
         List<Transaction> list = Transaction.loadList(new Transaction(), filter, sort);
         TrxAccount trxaccount;
+        List<TrxAccount> trxAccounts;
 
         for (Transaction transaction : list) {
             Object obj = transaction.get(F.TrxAccounts);
-            if (obj != null) {
-                //continue;
+            if (obj instanceof List) {
+                trxAccounts = (List<TrxAccount>) obj;
+                trxAccounts.clear();
+            } else {
+                trxAccounts = new ArrayList<>();
+                transaction.put(F.TrxAccounts, trxAccounts);
             }
 
-            List<TrxAccount> trxAccounts = new ArrayList<>();
             if (CASH.equals(transaction.getString(F.ItemNo))) {
                 // add customer acccount as credit
                 // Customer- (kurang uang)
@@ -299,6 +315,16 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
                 trxaccount.put(TrxAccount.F.DCFlag, DEBBIT);
                 trxAccounts.add(trxaccount);
             }
+            transaction.saveTrxAccounts(trxAccounts);
         }
+    }
+
+    private void saveTrxAccounts(List<TrxAccount> trxAccounts) {
+        System.out.println(this);
+        getCollection().updateOne(getFilter(), 
+                new Document("$set", new Document()
+                    .append(F.TrxAccounts.name(), trxAccounts)
+                ));
+        System.out.println(this);
     }
 }

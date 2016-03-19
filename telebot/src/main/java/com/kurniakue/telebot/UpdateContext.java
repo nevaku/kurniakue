@@ -7,6 +7,7 @@ package com.kurniakue.telebot;
 
 import static com.kurniakue.common.Common.*;
 import com.kurniakue.common.Tool;
+import com.kurniakue.data.Customer;
 import com.kurniakue.data.Record;
 import com.kurniakue.telebot.UpdateHandler.C;
 import com.pengrad.telegrambot.Replier;
@@ -71,6 +72,12 @@ public class UpdateContext {
         return userName;
     }
     
+    public String memberName;
+
+    public String getMemberName() {
+        return memberName;
+    }
+    
     private List<String> userGroups;
 
     public List<String> getUserGroups() {
@@ -87,6 +94,24 @@ public class UpdateContext {
 
     public long getUserAccountNo() {
         return userAccountNo;
+    }
+    
+    private String supplierMemberId;
+
+    public String getSupplierMemberId() {
+        return supplierMemberId;
+    }
+    
+    private long supplierAccountNo;
+
+    public long getSupplierAccountNo() {
+        return supplierAccountNo;
+    }
+    
+    private String supplierName;
+
+    public String getSupplierName() {
+        return supplierName;
     }
 
     private String text;
@@ -133,6 +158,17 @@ public class UpdateContext {
         }
         userMemberId = MemberIdOf.get(userName);
         userAccountNo = Tool.idToNo(userMemberId);
+        
+        // TODO: should load from member instead of customer
+        // should transfer data from customer to member first
+        Customer member = new Customer().load(userName);
+        memberName = member.getString(Customer.F.CustomerName);
+        
+        supplierMemberId = DINA_MEMBER_ID;
+        supplierAccountNo = Tool.idToNo(supplierMemberId);
+        Customer supplierMember = new Customer().load(userName);
+        supplierName = supplierMember.getString(Customer.F.CustomerName);
+        
         text = message.text();
 
         return this;
