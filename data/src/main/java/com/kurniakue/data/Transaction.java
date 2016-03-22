@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import org.bson.Document;
 import static com.kurniakue.data.KurniaKueDb.getDbCollection;
+import com.mongodb.client.result.UpdateResult;
 
 /**
  *
@@ -62,10 +63,10 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
         sb.append(getString(F.ItemName)).append(", ");
         sb.append(getString(F.Amount)).append(", ");
         
-        List<TrxAccount> trxAccounts = (List<TrxAccount>) get(F.TrxAccounts);
-        if (trxAccounts != null) {
+        List<TrxAccount> trxAccounts_ = getTrxAccounts();
+        if (trxAccounts_ != null) {
             sb.append("[");
-            for (TrxAccount trxAccount : trxAccounts) {
+            for (TrxAccount trxAccount : trxAccounts_) {
                 sb.append(trxAccount.toString()).append(", ");
             }
             sb.append("]");
@@ -234,6 +235,29 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
 
         return delete(filter);
     }
+    
+    private List<TrxAccount> trxAccounts;
+    
+    public List<TrxAccount> getTrxAccounts() {
+        if (trxAccounts != null) {
+            return trxAccounts;
+        }
+        
+        trxAccounts = new ArrayList<>();
+        
+        List<Document> trxdocs = (List<Document>) get(F.TrxAccounts);
+        if (trxdocs == null) {
+            return trxAccounts;
+        }
+        
+        for (Document trxdoc : trxdocs) {
+            TrxAccount trxAccount = new TrxAccount();
+            trxAccount.putAll(trxdoc);
+            trxAccounts.add(trxAccount);
+        }
+        
+        return trxAccounts;
+    }
 
     /**
      * Add account involved in each transaction. Add new Fields: Accounts in
@@ -264,17 +288,11 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
 
         List<Transaction> list = Transaction.loadList(new Transaction(), filter, sort);
         TrxAccount trxaccount;
-        List<TrxAccount> trxAccounts;
+        
 
         for (Transaction transaction : list) {
-            Object obj = transaction.get(F.TrxAccounts);
-            if (obj instanceof List) {
-                trxAccounts = (List<TrxAccount>) obj;
-                trxAccounts.clear();
-            } else {
-                trxAccounts = new ArrayList<>();
-                transaction.put(F.TrxAccounts, trxAccounts);
-            }
+            List<TrxAccount> trxAccounts = transaction.getTrxAccounts();
+            trxAccounts.clear();
 
             if (CASH.equals(transaction.getString(F.ItemNo))) {
                 // add customer acccount as credit
@@ -320,11 +338,14 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
     }
 
     private void saveTrxAccounts(List<TrxAccount> trxAccounts) {
-        System.out.println(this);
-        getCollection().updateOne(getFilter(), 
+        UpdateResult result = getCollection().updateOne(getFilter(), 
                 new Document("$set", new Document()
-                    .append(F.TrxAccounts.name(), trxAccounts)
+                        .append(F.TrxAccounts.name(), trxAccounts)
                 ));
-        System.out.println(this);
+        
+        if (result.getMatchedCount() == 0 || result.getModifiedCount() > 0) {
+            System.out.println(result.toString());
+            System.out.println(this);
+        }
     }
 }

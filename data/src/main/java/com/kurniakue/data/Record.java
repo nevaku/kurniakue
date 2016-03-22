@@ -35,7 +35,7 @@ public class Record<T extends Record> extends Document {
         super(key, value);
     }
 
-    public Record(EnumField key, String value) {
+    public Record(EnumField key, Object value) {
         super(key.name(), value);
     }
 
@@ -120,7 +120,7 @@ public class Record<T extends Record> extends Document {
     }
 
     public Record getFilter() {
-        return new Record(getKey(), getString(getKey()));
+        return new Record(getKey(), get(getKey()));
     }
 
     public EnumField getKey() {
@@ -131,7 +131,7 @@ public class Record<T extends Record> extends Document {
         return (get(F._id) != null);
     }
 
-    public T load(String keyValue) {
+    public T load(Object keyValue) {
         put(getKey(), keyValue);
         load();
         return (T) this;
@@ -144,7 +144,7 @@ public class Record<T extends Record> extends Document {
     }
 
     public T load() {
-        Document filter = new Document(getKey().name(), getString(getKey()));
+        Document filter = new Document(getKey().name(), get(getKey()));
         return load(filter);
     }
 
