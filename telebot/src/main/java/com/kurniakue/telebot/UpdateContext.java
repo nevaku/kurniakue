@@ -161,12 +161,12 @@ public class UpdateContext {
         
         // TODO: should load from member instead of customer
         // should transfer data from customer to member first
-        Customer member = new Customer().load(userName);
+        Customer member = new Customer().loadByCustomerId(userMemberId);
         memberName = member.getString(Customer.F.CustomerName);
         
         supplierMemberId = DINA_MEMBER_ID;
         supplierAccountNo = Tool.idToNo(supplierMemberId);
-        Customer supplierMember = new Customer().load(userName);
+        Customer supplierMember = new Customer().loadByCustomerId(supplierMemberId);
         supplierName = supplierMember.getString(Customer.F.CustomerName);
         
         text = message.text();

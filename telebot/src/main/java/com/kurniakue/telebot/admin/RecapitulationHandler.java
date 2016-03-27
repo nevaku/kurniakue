@@ -55,16 +55,12 @@ public class RecapitulationHandler extends UpdateHandler {
         return showCombination();
     });
     
-    public final Command cmd_income = new Command(this, "/pemasukan", () -> {
-        return showIncome();
+    public final Command cmd_myTrx = new Command(this, "/my_trx", () -> {
+        return showMyTrx();
     });
     
-    public final Command cmd_expense = new Command(this, "/pengeluaran", () -> {
-        return showExpense();
-    });
-    
-    public final Command cmd_balance = new Command(this, "/balance", () -> {
-        return showBalance();
+    public final Command cmd_supplierTrx = new Command(this, "/supplier_trx", () -> {
+        return sorry();
     });
     
     public final Command cmd_calculate = new Command(this, "/calculate", () -> {
@@ -77,9 +73,8 @@ public class RecapitulationHandler extends UpdateHandler {
     
     private final Command[] rekapMenu = {
         cmd_bill, cmd_deposit, cmd_all,
-        cmd_expense, cmd_income, cmd_balance,
-        cmd_calculate, cmd_upgrade, cmd_nihil,
-        cmd(C.Home), cmd_nihil, cmd_nihil};
+        cmd_supplierTrx, cmd_myTrx, cmd_nihil,
+        cmd(C.Home), cmd_calculate, cmd_upgrade};
     
     private final Command[] confirmMenuToCalculate = {cmd_no, cmd_yes_calculate};
     private final Command[] confirmMenuToUpgrade = {cmd_no, cmd_yes_upgrade};
@@ -159,7 +154,7 @@ public class RecapitulationHandler extends UpdateHandler {
         Positive,
     }
     
-    private boolean showTransactions(List<Record> list, ShowFlag showFlag) {
+    private boolean showTransactions(List<? extends Record> list, ShowFlag showFlag) {
         Replier replier = getReplier();
 
         long totalPay = 0;
@@ -230,5 +225,15 @@ public class RecapitulationHandler extends UpdateHandler {
         confirm = false;
         show();
         return true;
+    }
+    
+    private boolean showMyTrx() {
+        Calendar calendar = Calendar.getInstance();
+        String ThisYearMonth = DateInfo.getDateInfo(calendar)
+                .getString(DateInfo.F.ThisYearMonth);
+        
+        List<Transaction> list = new Transaction().showRekapOfAccount(
+                ThisYearMonth, getContext().getUserAccountNo());
+        return showTransactions(list, RecapitulationHandler.ShowFlag.All);
     }
 }

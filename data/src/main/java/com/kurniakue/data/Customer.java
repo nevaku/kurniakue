@@ -133,6 +133,10 @@ public class Customer extends Record<Customer> implements Comparable<Customer> {
 
         return infoSaldo;
     }
+
+    public Customer loadByCustomerId(String customerId) {
+        return super.loadByField(F.CustomerID, customerId);
+    }
     
     public void savePayment(int amount, String date) {
         int trxId = DbProp.getAndInc(N.LastTransactionID);

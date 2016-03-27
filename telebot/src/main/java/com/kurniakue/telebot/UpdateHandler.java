@@ -256,9 +256,10 @@ public class UpdateHandler {
         }
     }
 
-    public void sorry() {
+    public boolean sorry() {
         replier.add("Maaf, perintah ini sedang dalam pengembangan \n");
         replier.send();
+        return true;
     }
 
     public boolean handleCommand() {

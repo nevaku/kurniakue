@@ -320,7 +320,6 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
                 trxaccount.put(TrxAccount.F.AccountNo, supplierAccountNo);
                 trxaccount.put(TrxAccount.F.AccountName, supplierAccountName);
                 trxaccount.put(TrxAccount.F.Amount, transaction.getLong(F.Amount));
-                trxaccount.put(TrxAccount.F.Amount, transaction.getLong(F.Amount));
                 trxaccount.put(TrxAccount.F.DCFlag, CREDIT);
                 trxAccounts.add(trxaccount);
 
@@ -330,6 +329,7 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
                 long accountNo = Tool.idToNo(transaction.getString(F.CustomerID));
                 trxaccount.put(TrxAccount.F.AccountNo, accountNo);
                 trxaccount.put(TrxAccount.F.AccountName, transaction.getString(F.CustomerName));
+                trxaccount.put(TrxAccount.F.Amount, transaction.getLong(F.Amount));
                 trxaccount.put(TrxAccount.F.DCFlag, DEBBIT);
                 trxAccounts.add(trxaccount);
             }
@@ -347,5 +347,63 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
             System.out.println(result.toString());
             System.out.println(this);
         }
+    }
+
+    public List<Transaction> showRekapOfAccount(String yearMonth, long accountNo) {
+        Document filter = new Document()
+                .append(F.Date.name(),
+                        new Document("$regex", yearMonth + ".*")
+                        .append("$options", "i"))
+                .append(F.TrxAccounts.name(),
+                        new Document("$elemMatch", 
+                                new Document(TrxAccount.F.AccountNo.name(), accountNo)));
+        
+        long balance = 0;
+        long debit = 0;
+        long credit = 0;
+        List<Transaction> list = loadList(this, filter, null);
+        for (Transaction transaction : list) {
+            List<TrxAccount> curTrxAccounts = transaction.getTrxAccounts();
+            for (TrxAccount trxAccount : curTrxAccounts) {
+                if (trxAccount.getLong(TrxAccount.F.AccountNo) == accountNo)
+                {
+                    long amount = trxAccount.getLong(TrxAccount.F.Amount);
+                    int dcflag = trxAccount.getInt(TrxAccount.F.DCFlag);
+                    if (dcflag == 1)
+                    {
+                        debit += amount;                        
+                    }
+                    else {
+                        credit += amount;
+                    }
+                    
+                    balance += (amount * dcflag);
+                }
+            }
+        }
+        
+        list = new ArrayList<>();
+        
+        Transaction trx;
+        
+        trx = new Transaction();
+        trx.put(Transaction.V.Rekap, balance);
+        trx.put(Transaction.F._id, "Debit");
+        trx.put(F.DCFlag, 1);
+        list.add(trx);
+        
+        trx = new Transaction();
+        trx.put(Transaction.V.Rekap, balance);
+        trx.put(Transaction.F._id, "Credit");
+        trx.put(F.DCFlag, -1);
+        list.add(trx);
+        
+        trx = new Transaction();
+        trx.put(Transaction.V.Rekap, balance);
+        trx.put(Transaction.F._id, "Balance");
+        trx.put(F.DCFlag, 1);
+        list.add(trx);
+
+        return list;
     }
 }

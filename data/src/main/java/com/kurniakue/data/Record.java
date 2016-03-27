@@ -137,7 +137,7 @@ public class Record<T extends Record> extends Document {
         return (T) this;
     }
 
-    public T loadByField(EnumField field, String value) {
+    public T loadByField(EnumField field, Object value) {
         Document filter = new Document(field.name(), value);
         load(filter);
         return (T) this;
