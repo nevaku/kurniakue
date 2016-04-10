@@ -361,6 +361,11 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
         long balance = 0;
         long debit = 0;
         long credit = 0;
+        
+        List<Transaction> retlist = new ArrayList<>();
+        
+        Transaction trx;
+        
         List<Transaction> list = loadList(this, filter, null);
         for (Transaction transaction : list) {
             List<TrxAccount> curTrxAccounts = transaction.getTrxAccounts();
@@ -378,32 +383,19 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
                     }
                     
                     balance += (amount * dcflag);
+                    
+                    String remarks = transaction.getString(F.Date)
+                            + " - " + transaction.getString(F.ItemName)
+                            + " - " + transaction.getString(F.CustomerName);
+                    trx = new Transaction();
+                    trx.put(Transaction.V.Rekap, amount * dcflag);
+                    trx.put(Transaction.F._id, remarks);
+                    trx.put(F.DCFlag, 1);
+                    retlist.add(trx);
                 }
             }
         }
-        
-        list = new ArrayList<>();
-        
-        Transaction trx;
-        
-        trx = new Transaction();
-        trx.put(Transaction.V.Rekap, balance);
-        trx.put(Transaction.F._id, "Debit");
-        trx.put(F.DCFlag, 1);
-        list.add(trx);
-        
-        trx = new Transaction();
-        trx.put(Transaction.V.Rekap, balance);
-        trx.put(Transaction.F._id, "Credit");
-        trx.put(F.DCFlag, -1);
-        list.add(trx);
-        
-        trx = new Transaction();
-        trx.put(Transaction.V.Rekap, balance);
-        trx.put(Transaction.F._id, "Balance");
-        trx.put(F.DCFlag, 1);
-        list.add(trx);
 
-        return list;
+        return retlist;
     }
 }

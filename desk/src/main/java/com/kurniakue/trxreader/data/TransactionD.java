@@ -5,10 +5,7 @@
  */
 package com.kurniakue.trxreader.data;
 
-import static com.kurniakue.common.Common.formatMoney;
-import static com.kurniakue.common.Common.formatNumber;
-import static com.kurniakue.common.Common.tint;
-import static com.kurniakue.common.Common.tstr;
+import com.kurniakue.common.Tool;
 import com.kurniakue.trxreader.data.Transaction.F;
 import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
@@ -141,7 +138,7 @@ public class TransactionD extends Persistor {
             DBObject query = cursor.next();
             DBObject update = new BasicDBObject();
             update.putAll(query);
-            update.put(F.Amount.name(), tint(query.get(F.Price.name())) * tint(query.get(F.Count.name())));
+            update.put(F.Amount.name(), Tool.tint(query.get(F.Price.name())) * Tool.tint(query.get(F.Count.name())));
             transactions.update(query, update);
         }
     }
@@ -157,8 +154,8 @@ public class TransactionD extends Persistor {
         }
         while (cursor.hasNext()) {
             DBObject query = cursor.next();
-            if (tint(query.get(F.DCFlag.name())) < 0) {
-                amount += tint(query.get(F.Amount.name()));
+            if (Tool.tint(query.get(F.DCFlag.name())) < 0) {
+                amount += Tool.tint(query.get(F.Amount.name()));
             }
         }
         return amount;
@@ -177,9 +174,9 @@ public class TransactionD extends Persistor {
         }
         while (cursor.hasNext()) {
             DBObject query = cursor.next();
-            if (tstr(query.get(F.Date.name())).startsWith(monthStr)) {
-                if (tint(query.get(F.DCFlag.name())) < 0) {
-                    amount += tint(query.get(F.Amount.name()));
+            if (Tool.tstr(query.get(F.Date.name())).startsWith(monthStr)) {
+                if (Tool.tint(query.get(F.DCFlag.name())) < 0) {
+                    amount += Tool.tint(query.get(F.Amount.name()));
                 }
             }
         }
@@ -243,13 +240,13 @@ public class TransactionD extends Persistor {
             if (count > 1)
             {
                 samount = count + " x @" + 
-                          formatNumber(transaction.getInt(Transaction.F.Price))
+                          Tool.formatNumber(transaction.getInt(Transaction.F.Price))
                           + " = " + 
-                          formatNumber(amount * dcflag);
+                          Tool.formatNumber(amount * dcflag);
             }
             else
             {
-                samount = formatNumber(amount * dcflag);
+                samount = Tool.formatNumber(amount * dcflag);
             }
             System.out.println(transaction.getString(Transaction.F.Date)
                     + " " + transaction.getString(Transaction.F.ItemName)
@@ -257,7 +254,7 @@ public class TransactionD extends Persistor {
             );
         }
         
-        System.out.println("Total: " + formatMoney(total));
+        System.out.println("Total: " + Tool.formatMoney(total));
     }
 
     public void recapitulateCustomerAtMonth(String customerName, String yearMonth) {

@@ -1,18 +1,14 @@
 package com.kurniakue.data;
 
-import com.kurniakue.common.Common;
 import static com.kurniakue.common.Common.CASH;
-import static com.kurniakue.common.Common.formatMoney;
-import static com.kurniakue.common.Common.formatNumber;
 import com.kurniakue.common.EnumField;
+import com.kurniakue.common.Tool;
 import com.kurniakue.data.DbProp.N;
 import com.mongodb.client.MongoCollection;
 import java.util.List;
 import java.util.Map;
 import org.bson.Document;
 import static com.kurniakue.data.KurniaKueDb.getDbCollection;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  *
@@ -124,9 +120,9 @@ public class Customer extends Record<Customer> implements Comparable<Customer> {
         }
 
         if (total < 0) {
-            infoSaldo = "Tagihan: " + formatMoney(-total);
+            infoSaldo = "Tagihan: " + Tool.formatMoney(-total);
         } else if (total > 0) {
-            infoSaldo = "Saldo: " + formatMoney(total);
+            infoSaldo = "Saldo: " + Tool.formatMoney(total);
         } else {
             infoSaldo = "Tidak ada saldo/tagihan";
         }

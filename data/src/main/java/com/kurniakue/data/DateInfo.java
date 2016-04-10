@@ -7,6 +7,7 @@ package com.kurniakue.data;
 
 import com.kurniakue.common.Common;
 import com.kurniakue.common.EnumField;
+import com.kurniakue.common.Tool;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -17,7 +18,7 @@ import java.util.Date;
 public class DateInfo extends Record {
 
     public static DateInfo getDateInfo(String yearMonthDay) {
-        Date date = Common.parseDate(yearMonthDay, "yyyy-MM-dd");
+        Date date = Tool.parseDate(yearMonthDay, "yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return getDateInfo(calendar);
@@ -25,16 +26,16 @@ public class DateInfo extends Record {
 
     public static DateInfo getDateInfo(Calendar calendar) {
         DateInfo dateInfo = new DateInfo();
-        dateInfo.put(DateInfo.F.Today, Common.formatDate(calendar.getTime(), "yyyy-MM-dd"));
+        dateInfo.put(DateInfo.F.Today, Tool.formatDate(calendar.getTime(), "yyyy-MM-dd"));
         calendar.set(Calendar.DAY_OF_MONTH, 1);
-        dateInfo.put(DateInfo.F.FirstDayOfThisMonth, Common.formatDate(calendar.getTime(), "yyyy-MM-dd"));
-        dateInfo.put(DateInfo.F.ThisYearMonth, Common.formatDate(calendar.getTime(), "yyyy-MM"));
+        dateInfo.put(DateInfo.F.FirstDayOfThisMonth, Tool.formatDate(calendar.getTime(), "yyyy-MM-dd"));
+        dateInfo.put(DateInfo.F.ThisYearMonth, Tool.formatDate(calendar.getTime(), "yyyy-MM"));
         calendar.add(Calendar.DAY_OF_MONTH, -1);
-        dateInfo.put(DateInfo.F.LastDayOfLastMonth, Common.formatDate(calendar.getTime(), "yyyy-MM-dd"));
+        dateInfo.put(DateInfo.F.LastDayOfLastMonth, Tool.formatDate(calendar.getTime(), "yyyy-MM-dd"));
         calendar.set(Calendar.DAY_OF_MONTH, 1);
-        dateInfo.put(DateInfo.F.FirstDayOfLastMonth, Common.formatDate(calendar.getTime(), "yyyy-MM-dd"));
-        dateInfo.put(DateInfo.F.LastYearMonth, Common.formatDate(calendar.getTime(), "yyyy-MM"));
-        dateInfo.put(DateInfo.F.LastYearMonthyyyyMM, Common.formatDate(calendar.getTime(), "yyyyMM"));
+        dateInfo.put(DateInfo.F.FirstDayOfLastMonth, Tool.formatDate(calendar.getTime(), "yyyy-MM-dd"));
+        dateInfo.put(DateInfo.F.LastYearMonth, Tool.formatDate(calendar.getTime(), "yyyy-MM"));
+        dateInfo.put(DateInfo.F.LastYearMonthyyyyMM, Tool.formatDate(calendar.getTime(), "yyyyMM"));
         String alastMonthName = Common.monthsName[calendar.get(Calendar.MONTH) + 1];
         dateInfo.put(DateInfo.F.LastMonthName, alastMonthName);
         int lastYear = calendar.get(Calendar.YEAR);

@@ -6,6 +6,7 @@
 package com.kurniakue.telebot;
 
 import com.kurniakue.common.Common;
+import com.kurniakue.common.Tool;
 import com.kurniakue.data.DbProp;
 import com.kurniakue.data.KurniaKueDb;
 import com.kurniakue.data.TheConfig;
@@ -81,7 +82,7 @@ public class Main {
             try {
                 updatesResponse = bot.getUpdates(offset, config.getInt("UpdatePeriod"));
             } catch (Exception e) {
-                System.out.println(Common.formatDate(new Date(), "yyyyMMddHHmmss.SSS") + ":" + e.getMessage());
+                System.out.println(Tool.formatDate(new Date(), "yyyyMMddHHmmss.SSS") + ":" + e.getMessage());
                 continue;
             }
 
@@ -93,11 +94,11 @@ public class Main {
                 }
 
                 List<Update> updates = updatesResponse.updates();
-                System.out.println(Common.formatDate(new Date(), "yyyyMMddHHmmss.SSS") + ":" + "Number of updates: " + updates.size());
+                System.out.println(Tool.formatDate(new Date(), "yyyyMMddHHmmss.SSS") + ":" + "Number of updates: " + updates.size());
 
                 for (Update update : updates) {
                     offset = update.updateId() + 1;
-                    System.out.println(Common.formatDate(new Date(), "yyyyMMddHHmmss.SSS") + ":" + offset);
+                    System.out.println(Tool.formatDate(new Date(), "yyyyMMddHHmmss.SSS") + ":" + offset);
                     DbProp.setProp(N.offset, offset);
                     System.out.println(update);
                     System.out.println("--------------------------------------------------");

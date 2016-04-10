@@ -5,7 +5,7 @@
  */
 package com.kurniakue.telebot.admin;
 
-import static com.kurniakue.common.Common.formatMoney;
+import com.kurniakue.common.Tool;
 import com.kurniakue.data.DateInfo;
 import com.kurniakue.data.Record;
 import com.kurniakue.data.Transaction;
@@ -58,15 +58,15 @@ public class BalanceHandler extends UpdateHandler {
 
             if (amount < 0) {
                 totalBill -= amount;
-                replier.add(formatMoney(-amount));
+                replier.add(Tool.formatMoney(-amount));
             } else if (amount > 0) {
                 totalPay += amount;
-                replier.add(formatMoney(amount)).add(" \uD83D\uDC4C");
+                replier.add(Tool.formatMoney(amount)).add(" \uD83D\uDC4C");
             }
         }
         replier.addLine("");
-        replier.addLine("Total Tagihan : ").add(formatMoney(totalBill));
-        replier.addLine("Total Saldo   : ").add(formatMoney(totalPay));
+        replier.addLine("Total Tagihan : ").add(Tool.formatMoney(totalBill));
+        replier.addLine("Total Saldo   : ").add(Tool.formatMoney(totalPay));
 
         replier.send();
 

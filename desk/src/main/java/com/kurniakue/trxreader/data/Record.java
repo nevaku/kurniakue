@@ -7,6 +7,7 @@ package com.kurniakue.trxreader.data;
 
 import com.kurniakue.common.Common;
 import com.kurniakue.common.EnumField;
+import com.kurniakue.common.Tool;
 import java.util.HashMap;
 
 /**
@@ -37,15 +38,15 @@ public class Record extends HashMap<String, Object> {
 
     public String getStringNumber(EnumField key) {
         int val = getInt(key);
-        return Common.formatNumber(val);
+        return Tool.formatNumber(val);
     }
 
     public String tstr(EnumField key) {
-        return Common.tstr(get(key));
+        return Tool.tstr(get(key));
     }
 
     public int getInt(EnumField key) {
-        return Common.tint(get(key));
+        return Tool.tint(get(key));
     }
 
     @Override

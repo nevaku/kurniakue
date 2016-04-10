@@ -5,10 +5,8 @@
  */
 package com.kurniakue.telebot.admin;
 
-import static com.kurniakue.common.Common.formatMoney;
+import com.kurniakue.common.Tool;
 import com.kurniakue.data.Item;
-import com.kurniakue.data.Record;
-import com.kurniakue.data.Transaction;
 import com.kurniakue.telebot.Command;
 import com.kurniakue.telebot.UpdateHandler;
 import com.pengrad.telegrambot.Replier;
@@ -46,7 +44,7 @@ public class ItemsHandler extends UpdateHandler {
                     .add(item.getString(Item.F.ItemNo)).add("-")
                     .add(itemName).add(": ");
             long price = item.getLong(Item.F.Price);
-            replier.add(formatMoney(price));
+            replier.add(Tool.formatMoney(price));
         }
         
         replier.send();

@@ -4,6 +4,7 @@ import com.kurniakue.data.DateInfo;
 import com.kurniakue.tool.MailSender;
 import com.kurniakue.common.Common;
 import com.kurniakue.common.EnumField;
+import com.kurniakue.common.Tool;
 import com.kurniakue.trxreader.ui.CustomerDialog;
 import com.kurniakue.trxreader.ui.EmailDialog;
 import java.nio.file.Files;
@@ -88,7 +89,7 @@ public class Customer extends Record implements Comparable<Customer> {
         sb.append(Common.HORZ_LINE);
         for (Record transaction : transactions) {
             String dateStr = transaction.getString(Transaction.F.Date);
-            dateStr = Common.convertDateFormat(dateStr, "yyyy-MM-dd", "dd-MM-yyyy");
+            dateStr = Tool.convertDateFormat(dateStr, "yyyy-MM-dd", "dd-MM-yyyy");
             sb.append(dateStr).append("    ");
             for (int i = dateStr.length(); i < 10; i++) {
                 sb.append(" ");
@@ -102,7 +103,7 @@ public class Customer extends Record implements Comparable<Customer> {
             }
             item = (item + Common.SUBCAT_BLANKS).substring(0, Common.SUBCAT_LENGTH);
             sb.append(item);
-            String strAmount = Common.SUBCAT_BLANKS + Common.formatMoney(-amount);
+            String strAmount = Common.SUBCAT_BLANKS + Tool.formatMoney(-amount);
             int more = strAmount.length() - Common.SUBCAT_LENGTH;
             strAmount = strAmount.substring(more);
             sb.append(strAmount).append("\n");
@@ -182,7 +183,7 @@ public class Customer extends Record implements Comparable<Customer> {
     }
 
     private String getTotalString() {
-        String strTotal = Common.SUBCAT_BLANKS + Common.formatMoney(-total);
+        String strTotal = Common.SUBCAT_BLANKS + Tool.formatMoney(-total);
         int more = strTotal.length() - Common.SUBCAT_LENGTH;
         strTotal = strTotal.substring(more);
         return strTotal;

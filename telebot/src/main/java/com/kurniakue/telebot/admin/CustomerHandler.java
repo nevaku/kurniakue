@@ -7,6 +7,7 @@ package com.kurniakue.telebot.admin;
 
 import com.kurniakue.common.Common;
 import com.kurniakue.common.EnumField;
+import com.kurniakue.common.Tool;
 import com.kurniakue.data.Customer;
 import com.kurniakue.telebot.Command;
 import com.kurniakue.telebot.UpdateContext;
@@ -172,7 +173,7 @@ public class CustomerHandler extends UpdateHandler {
         
         int i = 0;
         for (Customer customer : customerList) {
-            replier.addLine(Common.formatNumber(i += 1, "000-"))
+            replier.addLine(Tool.formatNumber(i += 1, "000-"))
                     .add(customer.getString(Customer.F.CustomerID))
                     .add(":").add(customer.getString(Customer.F.CustomerName));
         }

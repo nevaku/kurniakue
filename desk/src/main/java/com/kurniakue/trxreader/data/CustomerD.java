@@ -5,7 +5,7 @@
  */
 package com.kurniakue.trxreader.data;
 
-import static com.kurniakue.common.Common.tint;
+import com.kurniakue.common.Tool;
 import com.kurniakue.trxreader.data.Customer.F;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -124,7 +124,7 @@ public class CustomerD extends Persistor {
             String id = customer.getString(F.CustomerID);
             if (id != null && id.length() >= 5)
             {
-                int idc = tint(id.substring(2));
+                int idc = Tool.tint(id.substring(2));
                 if (idc > lastId)
                 {
                     lastId = idc;

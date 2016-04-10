@@ -61,19 +61,19 @@ public class Record<T extends Record> extends Document {
 
     public String getStringNumber(EnumField key) {
         int val = getInt(key);
-        return Common.formatNumber(val);
+        return Tool.formatNumber(val);
     }
 
     public String tstr(EnumField key) {
-        return Common.tstr(get(key));
+        return Tool.tstr(get(key));
     }
 
     public int getInt(EnumField key) {
-        return Common.tint(get(key));
+        return Tool.tint(get(key));
     }
 
     public long getLong(EnumField key) {
-        return Common.tlong(get(key));
+        return Tool.tlong(get(key));
     }
 
     public <T> T getAs(EnumField key) {

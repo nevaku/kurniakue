@@ -5,13 +5,10 @@
  */
 package com.kurniakue.trxreader.ui;
 
-import com.kurniakue.common.Common;
 import static com.kurniakue.common.Common.CASH;
 import static com.kurniakue.common.Common._id;
-import static com.kurniakue.common.Common.formatNumber;
-import static com.kurniakue.common.Common.tint;
-import static com.kurniakue.common.Common.tstr;
 import com.kurniakue.common.EnumField;
+import com.kurniakue.common.Tool;
 import com.kurniakue.trxreader.data.Customer;
 import com.kurniakue.trxreader.data.CustomerD;
 import com.kurniakue.trxreader.data.Item;
@@ -926,7 +923,7 @@ public class TransactionDialog extends javax.swing.JDialog {
 
     private void goToYesterday() {
         String now = transactionDateBox.getText();
-        String yesterday = Common.addDay(now, -1);
+        String yesterday = Tool.addDay(now, -1);
         transactionDateBox.setText(yesterday);
         storeLastDate();
         loadTransaction();
@@ -934,7 +931,7 @@ public class TransactionDialog extends javax.swing.JDialog {
 
     private void goToTomorrow() {
         String now = transactionDateBox.getText();
-        String yesterday = Common.addDay(now, +1);
+        String yesterday = Tool.addDay(now, +1);
         transactionDateBox.setText(yesterday);
         storeLastDate();
         loadTransaction();
@@ -945,7 +942,7 @@ public class TransactionDialog extends javax.swing.JDialog {
         Item item = ItemD.get().find(itemNo, new Item());
         item.put(F.ItemNo, itemNo);
         item.put(F.ItemName, itemNameBox.getText());
-        item.put(F.Price, Common.tint(priceBox.getText()));
+        item.put(F.Price, Tool.tint(priceBox.getText()));
         ItemD.get().persist(item);
 
         loadItems();
@@ -999,7 +996,7 @@ public class TransactionDialog extends javax.swing.JDialog {
     private void saveTransaction() {
         int trxId;
         Transaction transaction;
-        if ("".equals(tstr(transactionIdBox.getText()))) {
+        if ("".equals(Tool.tstr(transactionIdBox.getText()))) {
             trxId = Prop.getInt(N.LastTransactionID);
             if (trxId < 0) {
                 trxId = 0;
@@ -1008,7 +1005,7 @@ public class TransactionDialog extends javax.swing.JDialog {
             Prop.store(N.LastTransactionID, trxId);
             transaction = new Transaction();
         } else {
-            trxId = tint(transactionIdBox.getText());
+            trxId = Tool.tint(transactionIdBox.getText());
             transaction = TransactionD.get().find(trxId, new Transaction());
         }
 
@@ -1025,9 +1022,9 @@ public class TransactionDialog extends javax.swing.JDialog {
         transaction.put(Transaction.F.CustomerName, customerName);
         transaction.put(Transaction.F.ItemNo, itemNo);
         transaction.put(Transaction.F.ItemName, item.getString(Item.F.ItemName));
-        transaction.put(Transaction.F.Price, tint(priceBox.getText()));
-        transaction.put(Transaction.F.Count, tint(countBox.getValue()));
-        int amount = tint(priceBox.getText()) * tint(countBox.getValue());
+        transaction.put(Transaction.F.Price, Tool.tint(priceBox.getText()));
+        transaction.put(Transaction.F.Count, Tool.tint(countBox.getValue()));
+        int amount = Tool.tint(priceBox.getText()) * Tool.tint(countBox.getValue());
         transaction.put(Transaction.F.Amount, amount);
 
         int dcflag = -1;
@@ -1043,8 +1040,8 @@ public class TransactionDialog extends javax.swing.JDialog {
     }
 
     private void updateAmount() {
-        int amount = tint(priceBox.getText()) * tint(countBox.getValue());
-        amountBox.setText(Common.formatMoney(amount));
+        int amount = Tool.tint(priceBox.getText()) * Tool.tint(countBox.getValue());
+        amountBox.setText(Tool.formatMoney(amount));
     }
 
     private void initSpinner(JSpinner spinner) {
@@ -1098,7 +1095,7 @@ public class TransactionDialog extends javax.swing.JDialog {
                     + "," + transaction.getString(Transaction.F.ItemName)
                     + "," + transaction.getString(Transaction.F.Price)
                     + "," + transaction.getString(Transaction.F.Count)
-                    + "," + formatNumber(transaction.getInt(Transaction.F.Amount)
+                    + "," + Tool.formatNumber(transaction.getInt(Transaction.F.Amount)
                             * transaction.getInt(Transaction.F.DCFlag)),
                     row, 2);
             model.setValueAt(
@@ -1110,25 +1107,25 @@ public class TransactionDialog extends javax.swing.JDialog {
         }
 
         int amountOfTheDate = TransactionD.get().getAmountOfTheDate(transactionDate);
-        amountOfTheDateBox.setText(Common.formatMoney(amountOfTheDate));
+        amountOfTheDateBox.setText(Tool.formatMoney(amountOfTheDate));
 
         int amountOfTheMonth = TransactionD.get().getAmountOfTheMonth(transactionDate);
-        amountOfTheMonthBox.setText(Common.formatMoney(amountOfTheMonth));
+        amountOfTheMonthBox.setText(Tool.formatMoney(amountOfTheMonth));
     }
 
     private void loadDefaults() {
         String lastDate = Prop.tstr(N.LastDate);
         if ("".equals(lastDate)) {
-            lastDate = Common.formatDate(new Date(), "yyyy-MM-dd");
+            lastDate = Tool.formatDate(new Date(), "yyyy-MM-dd");
         }
         transactionDateBox.setText(lastDate);
     }
 
     private void editSelectedTransaction() {
         int row = transactionTable.getSelectedRow();
-        String dateid = tstr(transactionTable.getValueAt(row, 1));
+        String dateid = Tool.tstr(transactionTable.getValueAt(row, 1));
         String[] dateids = dateid.split(",");
-        int transactionId = tint(dateids[1]);
+        int transactionId = Tool.tint(dateids[1]);
         Transaction transaction = TransactionD.get().find(transactionId, new Transaction());
 
         transactionDateBox.setText(transaction.getString(Transaction.F.Date));
@@ -1147,14 +1144,14 @@ public class TransactionDialog extends javax.swing.JDialog {
 
     private void deleteSelectedTransaction() {
         int row = transactionTable.getSelectedRow();
-        String dateid = tstr(transactionTable.getValueAt(row, 1));
+        String dateid = Tool.tstr(transactionTable.getValueAt(row, 1));
         int ret = JOptionPane.showConfirmDialog(this, "Are you sure to delete Transaction " + dateid);
         if (ret == JOptionPane.NO_OPTION || ret == JOptionPane.CANCEL_OPTION) {
             return;
         }
 
         String[] dateids = dateid.split(",");
-        int transactionId = tint(dateids[1]);
+        int transactionId = Tool.tint(dateids[1]);
         TransactionD.get().delete(transactionId);
 
         loadTransaction();
@@ -1172,7 +1169,7 @@ public class TransactionDialog extends javax.swing.JDialog {
 
     private void recapitulateCustomerAtMonth() {
         String customerName = customerNameBox.getText();
-        String transactionMonth = Common.convertDateFormat(transactionDateBox.getText(), "yyyy-MM-dd", "yyyy-MM");
+        String transactionMonth = Tool.convertDateFormat(transactionDateBox.getText(), "yyyy-MM-dd", "yyyy-MM");
         TransactionD.get().printCustomerAtMonth(customerName, transactionMonth);
         TransactionD.get().recapitulateCustomerAtMonth(customerName, transactionMonth);
     }

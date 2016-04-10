@@ -51,7 +51,7 @@ public class SaldoHandler extends UpdateHandler {
             total += (amount * dcflag);
         }
         
-        String saldo = Common.formatMoney(total);
+        String saldo = Tool.formatMoney(total);
         
         replier.add("Hai ").add(userName).add(".\n")
                 .add("Saldo anda per tanggal ").add(lastUpdate).add(" adalah ")

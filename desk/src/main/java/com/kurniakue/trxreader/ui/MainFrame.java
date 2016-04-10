@@ -7,8 +7,7 @@ package com.kurniakue.trxreader.ui;
 
 import com.kurniakue.common.Common;
 import static com.kurniakue.common.Common.PrintMode.*;
-import static com.kurniakue.common.Common.formatDate;
-import static com.kurniakue.common.Common.parseDate;
+import com.kurniakue.common.Tool;
 import com.kurniakue.trxreader.TrxDbReader;
 import com.kurniakue.trxreader.data.KurniaKueDb;
 import io.loli.datepicker.DatePicker;
@@ -263,7 +262,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void init() {
         KurniaKueDb.init();
         DatePicker.datePicker(transactionDateBox);
-        transactionDateBox.setText(formatDate(new Date(), "yyyy-MM-dd"));
+        transactionDateBox.setText(Tool.formatDate(new Date(), "yyyy-MM-dd"));
         baseDirBox.setText(Common.driveDir);
     }
 
@@ -286,7 +285,7 @@ public class MainFrame extends javax.swing.JFrame {
             Common.printModes.remove(DbUpdate);
         }
         String strDate = transactionDateBox.getText();
-        Date date = parseDate(strDate, "yyyy-MM-dd");
+        Date date = Tool.parseDate(strDate, "yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         String baseDir = baseDirBox.getText();

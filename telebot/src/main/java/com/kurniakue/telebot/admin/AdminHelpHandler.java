@@ -21,10 +21,14 @@ public class AdminHelpHandler extends HelpHandler {
     private final Command cmd_items = new Command(this, "/item", () -> {
         return showItems();
     });
+    
+    public final Command cmd_setDate = new Command(this, "/set_Date", () -> {
+        return setCurrentDate();
+    });
 
     private final Command[] adminMenu = {
         cmd(C.Help), cmd(C.Customer), cmd_items,
-        cmd_recapitulation, cmd(C.Booking)};
+        cmd_recapitulation, cmd_setDate, cmd(C.Booking)};
 
     public AdminHelpHandler() {
         activeCommands = adminMenu;
@@ -58,5 +62,9 @@ public class AdminHelpHandler extends HelpHandler {
     public boolean showItems() {
         ItemsHandler handler = getContext().getHandler(ItemsHandler.class);
         return handler.transferTo(handler.cmd_items);
+    }
+    
+    private boolean setCurrentDate() {
+        return getContext().transferTo(DateHandler.class);
     }
 }

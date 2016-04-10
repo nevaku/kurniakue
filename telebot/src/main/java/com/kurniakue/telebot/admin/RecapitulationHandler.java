@@ -5,7 +5,7 @@
  */
 package com.kurniakue.telebot.admin;
 
-import static com.kurniakue.common.Common.formatMoney;
+import com.kurniakue.common.Tool;
 import com.kurniakue.data.DateInfo;
 import com.kurniakue.data.Record;
 import com.kurniakue.data.Transaction;
@@ -59,8 +59,8 @@ public class RecapitulationHandler extends UpdateHandler {
         return showMyTrx();
     });
     
-    public final Command cmd_supplierTrx = new Command(this, "/supplier_trx", () -> {
-        return sorry();
+    public final Command cmd_supplierTrx = new Command(this, "/sup_trx", () -> {
+        return showMySupplierTrx();
     });
     
     public final Command cmd_calculate = new Command(this, "/calculate", () -> {
@@ -72,8 +72,8 @@ public class RecapitulationHandler extends UpdateHandler {
     });
     
     private final Command[] rekapMenu = {
+        cmd_myTrx, cmd_supplierTrx, cmd_nihil,
         cmd_bill, cmd_deposit, cmd_all,
-        cmd_supplierTrx, cmd_myTrx, cmd_nihil,
         cmd(C.Home), cmd_calculate, cmd_upgrade};
     
     private final Command[] confirmMenuToCalculate = {cmd_no, cmd_yes_calculate};
@@ -174,10 +174,10 @@ public class RecapitulationHandler extends UpdateHandler {
             final String customer = record.getString(Transaction.F._id);
             replier.addLine(strCount).add(customer).add(": ");
             totalPay += amount;
-            replier.add(formatMoney(amount));
+            replier.add(Tool.formatMoney(amount));
         }
         replier.addLine("");
-        replier.addLine("Total : ").add(formatMoney(totalPay));
+        replier.addLine("Total : ").add(Tool.formatMoney(totalPay));
 
         replier.send();
         return true;
@@ -234,6 +234,16 @@ public class RecapitulationHandler extends UpdateHandler {
         
         List<Transaction> list = new Transaction().showRekapOfAccount(
                 ThisYearMonth, getContext().getUserAccountNo());
+        return showTransactions(list, RecapitulationHandler.ShowFlag.All);
+    }
+    
+    private boolean showMySupplierTrx() {
+        Calendar calendar = Calendar.getInstance();
+        String ThisYearMonth = DateInfo.getDateInfo(calendar)
+                .getString(DateInfo.F.ThisYearMonth);
+        
+        List<Transaction> list = new Transaction().showRekapOfAccount(
+                ThisYearMonth, getContext().getSupplierAccountNo());
         return showTransactions(list, RecapitulationHandler.ShowFlag.All);
     }
 }

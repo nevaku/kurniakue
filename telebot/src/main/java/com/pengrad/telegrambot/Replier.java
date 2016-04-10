@@ -8,6 +8,7 @@ package com.pengrad.telegrambot;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
+import java.util.List;
 
 /**
  *
@@ -24,14 +25,30 @@ public class Replier {
         this.bot = bot;
         this.update = update;
     }
+    
+    private static final int MAX_LENGTH = 3000;
 
     public Replier add(Object text) {
+        if (reply.length() + String.valueOf(text).length() > MAX_LENGTH)
+        {
+            send();
+            reply = new StringBuilder(1000);
+        }
         reply.append(text);
         return this;
     }
     
     public Replier addLine(String text) {
-        reply.append("\n").append(text);
+        if (reply.length() + String.valueOf(text).length() > MAX_LENGTH)
+        {
+            send();
+            reply = new StringBuilder(1000);
+        }
+        else
+        {
+            reply.append("\n");
+        }
+        reply.append(text);
         return this;
     }
     
@@ -55,6 +72,10 @@ public class Replier {
         }
         reset();
         return this;
+    }
+
+    public Replier keyboard(List<String> menuList) {
+        return keyboard(menuList.toArray(new String[menuList.size()]));
     }
 
     public Replier keyboard(String... menuList) {

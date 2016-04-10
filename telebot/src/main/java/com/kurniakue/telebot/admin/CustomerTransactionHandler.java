@@ -5,8 +5,6 @@
  */
 package com.kurniakue.telebot.admin;
 
-import static com.kurniakue.common.Common.formatMoney;
-import static com.kurniakue.common.Common.formatNumber;
 import com.kurniakue.data.Customer;
 import com.kurniakue.data.Customer.F;
 import com.kurniakue.data.DateInfo;
@@ -17,8 +15,7 @@ import com.kurniakue.telebot.UpdateHandler;
 import com.kurniakue.telebot.admin.CustomerHandler.CTX;
 import java.util.Calendar;
 import java.util.List;
-import static com.kurniakue.common.Common.formatNumber;
-import static com.kurniakue.common.Common.formatNumber;
+import com.kurniakue.common.Tool;
 
 /**
  *
@@ -103,11 +100,11 @@ public class CustomerTransactionHandler extends UpdateHandler {
             String samount;
             if (count > 1) {
                 samount = count + " x @"
-                        + formatNumber(transaction.getInt(Transaction.F.Price))
+                        + Tool.formatNumber(transaction.getInt(Transaction.F.Price))
                         + " = "
-                        + formatNumber(amount);
+                        + Tool.formatNumber(amount);
             } else {
-                samount = formatNumber(amount);
+                samount = Tool.formatNumber(amount);
             }
 
             getReplier()
@@ -123,9 +120,9 @@ public class CustomerTransactionHandler extends UpdateHandler {
         
         String infoSaldo;
         if (total < 0) {
-            infoSaldo = "Tagihan: " + formatMoney(-total);
+            infoSaldo = "Tagihan: " + Tool.formatMoney(-total);
         } else if (total > 0) {
-            infoSaldo = "Saldo: " + formatMoney(total);
+            infoSaldo = "Saldo: " + Tool.formatMoney(total);
         } else {
             infoSaldo = "Tidak ada saldo/tagihan";
         }

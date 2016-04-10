@@ -1,7 +1,7 @@
 package com.kurniakue.data;
 
-import static com.kurniakue.common.Common.tint;
 import com.kurniakue.common.EnumField;
+import com.kurniakue.common.Tool;
 import static com.kurniakue.data.KurniaKueDb.getDbCollection;
 import com.mongodb.client.MongoCollection;
 import java.util.Map;
@@ -76,7 +76,7 @@ public class DbProp extends Record<DbProp> implements Comparable<DbProp> {
     }
 
     public static int getPropInt(EnumField property) {
-        return tint(getProp(property));
+        return Tool.tint(getProp(property));
     }
 
     public static void setProp(EnumField property, Object propertyValue) {

@@ -5,8 +5,6 @@
  */
 package com.kurniakue.telebot.admin;
 
-import com.kurniakue.common.Common;
-import static com.kurniakue.common.Common.formatNumber;
 import com.kurniakue.data.Customer;
 import com.kurniakue.data.Customer.F;
 import com.kurniakue.data.DateInfo;
@@ -15,8 +13,7 @@ import com.kurniakue.telebot.UpdateContext;
 import com.kurniakue.telebot.UpdateHandler;
 import com.kurniakue.telebot.admin.CustomerHandler.CTX;
 import java.util.Calendar;
-import static com.kurniakue.common.Common.formatNumber;
-import static com.kurniakue.common.Common.formatNumber;
+import com.kurniakue.common.Tool;
 
 /**
  *
@@ -85,7 +82,7 @@ public class CustomerPayHandler extends UpdateHandler {
     private boolean validateAndPay(String text) {
         String[] parts = text.split(" ");
 
-        int amount = Common.tint(parts[0]);
+        int amount = Tool.tint(parts[0]);
         if (amount <= 0) {
             getReplier()
                     .addLine("Nilai  yang anda masukkan: ").add(parts[0])
@@ -103,7 +100,7 @@ public class CustomerPayHandler extends UpdateHandler {
                         + parts[1];
             }
             
-            if (Common.parseDate(date, "yyyy-MM-dd") == null) {
+            if (Tool.parseDate(date, "yyyy-MM-dd") == null) {
                 getReplier()
                         .addLine("Tanggal yang anda masukkan: ").add(parts[0])
                         .add(" masih belum benar")
@@ -116,7 +113,7 @@ public class CustomerPayHandler extends UpdateHandler {
 
         getReplier()
                 .addLine("Pembayaran/setoran dari ").add(getCustomerName())
-                .addLine("Senilai ").add(formatNumber(amount))
+                .addLine("Senilai ").add(Tool.formatNumber(amount))
                 .addLine("Tanggal ").add(date)
                 .addLine("Telah berhasil");
 
