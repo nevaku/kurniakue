@@ -194,7 +194,10 @@ public class RecapitulationHandler extends UpdateHandler {
             return true;
         }
         
-        new Transaction().recapitulate(DateInfo.getDateInfo(Calendar.getInstance()));
+        Calendar calendar = getContext().getCurrentCalendar();
+        DateInfo dateInfo = DateInfo.getDateInfo(calendar);
+        replier.add("Rekapitulate transaction in " + dateInfo.getString(DateInfo.F.ThisYearMonth)).send();
+        new Transaction().recapitulate(dateInfo);
         
         replier.add("Rekapitulasi selesai.");
         confirm = false;
@@ -216,8 +219,11 @@ public class RecapitulationHandler extends UpdateHandler {
         
         UpdateContext context = getContext();
         
+        Calendar calendar = getContext().getCurrentCalendar();
+        DateInfo dateInfo = DateInfo.getDateInfo(calendar);
+        replier.add("Upgrade transaction in " + dateInfo.getString(DateInfo.F.ThisYearMonth)).send();
         Transaction.upgradeTrx_addAccounts(
-                DateInfo.getDateInfo(Calendar.getInstance()),
+                dateInfo,
                 context.getUserAccountNo(), context.getMemberName(), 
                 context.getSupplierAccountNo(), context.getSupplierName());
         
@@ -228,9 +234,10 @@ public class RecapitulationHandler extends UpdateHandler {
     }
     
     private boolean showMyTrx() {
-        Calendar calendar = Calendar.getInstance();
-        String ThisYearMonth = DateInfo.getDateInfo(calendar)
-                .getString(DateInfo.F.ThisYearMonth);
+        Calendar calendar = getContext().getCurrentCalendar();
+        DateInfo dateInfo = DateInfo.getDateInfo(calendar);
+        getReplier().add("Show my transaction in " + dateInfo.getString(DateInfo.F.ThisYearMonth)).send();
+        String ThisYearMonth = dateInfo.getString(DateInfo.F.ThisYearMonth);
         
         List<Transaction> list = new Transaction().showRekapOfAccount(
                 ThisYearMonth, getContext().getUserAccountNo());
@@ -238,9 +245,10 @@ public class RecapitulationHandler extends UpdateHandler {
     }
     
     private boolean showMySupplierTrx() {
-        Calendar calendar = Calendar.getInstance();
-        String ThisYearMonth = DateInfo.getDateInfo(calendar)
-                .getString(DateInfo.F.ThisYearMonth);
+        Calendar calendar = getContext().getCurrentCalendar();
+        DateInfo dateInfo = DateInfo.getDateInfo(calendar);
+        getReplier().add("Show supplier transaction in " + dateInfo.getString(DateInfo.F.ThisYearMonth)).send();
+        String ThisYearMonth = dateInfo.getString(DateInfo.F.ThisYearMonth);
         
         List<Transaction> list = new Transaction().showRekapOfAccount(
                 ThisYearMonth, getContext().getSupplierAccountNo());

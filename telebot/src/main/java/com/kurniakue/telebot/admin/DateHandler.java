@@ -6,6 +6,7 @@
 package com.kurniakue.telebot.admin;
 
 import com.kurniakue.common.Tool;
+import com.kurniakue.data.DateInfo;
 import com.kurniakue.telebot.Command;
 import com.kurniakue.telebot.UpdateHandler;
 import com.kurniakue.telebot.admin.CustomerHandler.CTX;
@@ -18,7 +19,7 @@ import java.util.List;
  * @author harun1
  */
 public class DateHandler extends UpdateHandler {
-    
+
     public final Command cmd_show = new Command(this, "/set_Date", () -> {
         return show();
     });
@@ -26,49 +27,68 @@ public class DateHandler extends UpdateHandler {
     private final Command cmd_home = new Command(this, "/awal", () -> {
         return awal();
     });
-    
+
     public DateHandler() {
-        
+
     }
 
     @Override
     public boolean execute() {
         return show();
     }
-    
+
     private boolean show() {
         String[] params = getParams();
-        
-        if(params.length > 0) {
+
+        if (params.length > 0) {
             setCurrentDate(params[0]);
         } else {
-            getReplier().addLine("Current date is: " + getContext().data.getString(CTX.YearMonthSet));
+            Calendar calendar = getContext().getCurrentCalendar();
+            getReplier().addLine("Current date is: " + DateInfo.getDateInfo(
+                    calendar).getString(DateInfo.F.Today));
         }
-        
+
         List<String> keyboards = getAvailableDateSelections();
         keyboards.add(cmd_home.getCmd());
         getReplier().addLine("Silakan").keyboard(keyboards).send();
         return true;
     }
-    
+
     private List<String> getAvailableDateSelections() {
         List<String> availableDateSelections = new ArrayList<>();
         Calendar calendar = Calendar.getInstance();
-        String thisYearMonth = Tool.formatDate(calendar.getTime(), "yyyy-MM");
-        calendar.add(Calendar.MONTH, -1);
-        String lastYearMonth = Tool.formatDate(calendar.getTime(), "yyyy-MM");
-        calendar.add(Calendar.MONTH, 2);
-        String nextYearMonth = Tool.formatDate(calendar.getTime(), "yyyy-MM");
         
-        availableDateSelections.add(lastYearMonth);
-        availableDateSelections.add(thisYearMonth);
-        availableDateSelections.add(nextYearMonth);
+        calendar.add(Calendar.MONTH, -4);
+        String yearMonth = Tool.formatDate(calendar.getTime(), "yyyy-MM-dd");
+        availableDateSelections.add(yearMonth);
         
+        calendar.add(Calendar.MONTH, 1);
+        yearMonth = Tool.formatDate(calendar.getTime(), "yyyy-MM-dd");
+        availableDateSelections.add(yearMonth);
+        
+        calendar.add(Calendar.MONTH, 1);
+        yearMonth = Tool.formatDate(calendar.getTime(), "yyyy-MM-dd");
+        availableDateSelections.add(yearMonth);
+        
+        calendar.add(Calendar.MONTH, 1);
+        yearMonth = Tool.formatDate(calendar.getTime(), "yyyy-MM-dd");
+        availableDateSelections.add(yearMonth);
+        
+        calendar.add(Calendar.MONTH, 1);
+        yearMonth = Tool.formatDate(calendar.getTime(), "yyyy-MM-dd");
+        availableDateSelections.add(yearMonth);
+        
+        calendar.add(Calendar.MONTH, 1);
+        yearMonth = Tool.formatDate(calendar.getTime(), "yyyy-MM-dd");
+        availableDateSelections.add(yearMonth);
+
         return availableDateSelections;
     }
-    
-    private void setCurrentDate(String yearMonth) {
-        getContext().data.put(CTX.YearMonthSet, yearMonth);
-        getReplier().addLine("Set current date to: "+ yearMonth);
+
+    private void setCurrentDate(String today) {
+        DateInfo dateInfo = DateInfo.getDateInfo(today);
+        getContext().setCurrentCalendar(dateInfo.getCalendar());
+        getContext().data.put(CTX.YearMonthSet, dateInfo.getString(DateInfo.F.ThisYearMonth));
+        getReplier().addLine("Set current date to: " + dateInfo.getString(DateInfo.F.Today));
     }
 }

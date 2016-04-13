@@ -10,12 +10,14 @@ import com.kurniakue.common.Tool;
 import com.kurniakue.data.Customer;
 import com.kurniakue.data.Record;
 import com.kurniakue.telebot.UpdateHandler.C;
+import com.kurniakue.telebot.admin.CustomerHandler.CTX;
 import com.pengrad.telegrambot.Replier;
 import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.model.Chat;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,9 +137,20 @@ public class UpdateContext {
     public UpdateContext(long id) {
         this.id = id;
     }
+    
+    private Calendar currentCalendar = Calendar.getInstance();
+
+    public void setCurrentCalendar(Calendar calendar) {
+        this.currentCalendar = (Calendar) calendar.clone();
+    }
+
+    public Calendar getCurrentCalendar() {
+        return (Calendar) currentCalendar.clone();
+    }
 
     public UpdateContext setInitialInfo(TelegramBot bot, Update update) {
         setInfo(bot, update);
+        data.put(CTX.YearMonthSet, Tool.formatDate(getCurrentCalendar().getTime(), "yyyy-MM"));
         registeredHandler = UpdateHandler.createRegisteredHandler(update, this);
         activeHandler = registeredHandler.get(C.Help.cmd);
         System.out.println("Active Handler: " + activeHandler.getClass().getSimpleName());

@@ -184,7 +184,7 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
         List<Record> list = getRekapOfMonthPerCustomer(dateInfo.getString(DateInfo.F.LastYearMonth));
         for (Record record : list) {
             new Transaction().deleteRekapOf(
-                    record.getString(F._id), dateInfo);
+                    record.getString(F._id), dateInfo.getString(DateInfo.F.ThisYearMonth));
             long amount = record.getLong(V.Rekap);
             if (amount == 0) {
                 continue;
@@ -224,8 +224,7 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
         }
     }
 
-    public Transaction deleteRekapOf(String customerName, DateInfo dateInfo) {
-        String yearMonth = dateInfo.getString(DateInfo.F.ThisYearMonth);
+    public Transaction deleteRekapOf(String customerName, String yearMonth) {
         Document filter = new Document()
                 .append(F.Date.name(),
                         new Document("$regex", yearMonth + ".*")
