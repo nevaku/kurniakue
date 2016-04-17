@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import org.bson.Document;
 import static com.kurniakue.data.KurniaKueDb.getDbCollection;
+import static com.kurniakue.data.KurniaKueDb.getDbCollection;
 
 /**
  *

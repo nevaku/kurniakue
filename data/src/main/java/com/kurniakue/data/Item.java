@@ -16,7 +16,8 @@ public class Item extends Record<Item> implements Comparable<Item> {
 
     public enum F implements EnumField {
 
-        ItemNo, ItemName, Description, Price, Modal, State;
+        ItemNo, ItemName, Description, Price, Modal, State,
+        ItemType;
     }
 
     public static final String COLLECTION_NAME = "items";

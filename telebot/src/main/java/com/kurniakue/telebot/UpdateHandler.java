@@ -203,7 +203,7 @@ public class UpdateHandler {
 
     private String[] params;
 
-    public void setParams(String[] params) {
+    public void setParams(String... params) {
         this.params = params;
     }
 

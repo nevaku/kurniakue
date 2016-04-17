@@ -83,7 +83,7 @@ public class CustomerPayHandler extends UpdateHandler {
         String[] parts = text.split(" ");
 
         int amount = Tool.tint(parts[0]);
-        if (amount <= 0) {
+        if (amount == 0) {
             getReplier()
                     .addLine("Nilai  yang anda masukkan: ").add(parts[0])
                     .add(" masih belum benar")

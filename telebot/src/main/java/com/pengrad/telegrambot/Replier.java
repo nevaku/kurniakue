@@ -38,6 +38,10 @@ public class Replier {
         return this;
     }
     
+    public Replier addLine(Object object) {
+        return addLine(String.valueOf(object));
+    }
+    
     public Replier addLine(String text) {
         if (reply.length() + String.valueOf(text).length() > MAX_LENGTH)
         {
@@ -63,6 +67,9 @@ public class Replier {
         }
         if (update.message().chat() == null) {
             return this;
+        }
+        if (reply.length() == 0) {
+            reply.append("-");
         }
         if (replyMarkup == null) {
             bot.sendMessage(update.message().chat().id(), reply.toString());

@@ -18,7 +18,7 @@ public class AdminHelpHandler extends HelpHandler {
         return recapitulation();
     });
 
-    private final Command cmd_items = new Command(this, "/item", () -> {
+    private final Command cmd_items = new Command(this, "/items", () -> {
         return showItems();
     });
     

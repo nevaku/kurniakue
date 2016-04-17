@@ -15,6 +15,7 @@ import java.util.Map;
 import org.bson.Document;
 import static com.kurniakue.data.KurniaKueDb.getDbCollection;
 import com.mongodb.client.result.UpdateResult;
+import static com.kurniakue.data.KurniaKueDb.getDbCollection;
 
 /**
  *
@@ -288,10 +289,15 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
         List<Transaction> list = Transaction.loadList(new Transaction(), filter, sort);
         TrxAccount trxaccount;
         
-
+        int updateCounter = 0;
         for (Transaction transaction : list) {
             List<TrxAccount> trxAccounts = transaction.getTrxAccounts();
-            trxAccounts.clear();
+            if (!trxAccounts.isEmpty())
+            {
+                continue;
+            }
+            
+            updateCounter += 1;
 
             if (CASH.equals(transaction.getString(F.ItemNo))) {
                 // add customer acccount as credit
@@ -333,6 +339,7 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
                 trxAccounts.add(trxaccount);
             }
             transaction.saveTrxAccounts(trxAccounts);
+            System.out.println("#" + updateCounter + " updated. ");
         }
     }
 
@@ -348,7 +355,7 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
         }
     }
 
-    public List<Transaction> showRekapOfAccount(String yearMonth, long accountNo) {
+    public List<Transaction> getListTrxOfAccount(String yearMonth, long accountNo) {
         Document filter = new Document()
                 .append(F.Date.name(),
                         new Document("$regex", yearMonth + ".*")
@@ -386,7 +393,7 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
                     String remarks = transaction.getString(F.Date)
                             + " - " + transaction.getString(F.ItemName)
                             + " - " + transaction.getString(F.CustomerName);
-                    trx = new Transaction();
+                    trx = new Transaction(transaction);
                     trx.put(Transaction.V.Rekap, amount * dcflag);
                     trx.put(Transaction.F._id, remarks);
                     trx.put(F.DCFlag, 1);

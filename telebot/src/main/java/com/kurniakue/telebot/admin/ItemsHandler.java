@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ItemsHandler extends UpdateHandler {
 
-    public final Command cmd_items = new Command(this, "/barang", () -> {
+    public final Command cmd_items = new Command(this, "/items", () -> {
         return showItems();
     });
 
@@ -28,7 +28,11 @@ public class ItemsHandler extends UpdateHandler {
 
     @Override
     public boolean execute() {
-        return showItems();
+        if ("/items".equals(getCmd())) {
+            return showItems();
+        } else {
+            return showItemProps();
+        }
     }
     
     private boolean showItems() {
@@ -41,14 +45,21 @@ public class ItemsHandler extends UpdateHandler {
             String strCount = StringUtils.leftPad(count + ". ", 5, "0");
             final String itemName = item.getString(Item.F.ItemName);
             replier.addLine(strCount)
-                    .add(item.getString(Item.F.ItemNo)).add("-")
+                    .add("/").add(item.getString(Item.F.ItemNo)).add("-")
                     .add(itemName).add(": ");
             long price = item.getLong(Item.F.Price);
             replier.add(Tool.formatMoney(price));
         }
         
+        replier.keyboard(C.Home.cmd);
         replier.send();
         
-        return petunjuk();
+        return true;
+    }
+
+    private boolean showItemProps() {
+        setParams(getCmd().substring(1));
+        ItemPropsHandler handler = getContext().getHandler(ItemPropsHandler.class);
+        return handler.transferTo(handler.cmd_itemProps);
     }
 }

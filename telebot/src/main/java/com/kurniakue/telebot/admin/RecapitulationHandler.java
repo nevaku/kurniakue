@@ -239,7 +239,7 @@ public class RecapitulationHandler extends UpdateHandler {
         getReplier().add("Show my transaction in " + dateInfo.getString(DateInfo.F.ThisYearMonth)).send();
         String ThisYearMonth = dateInfo.getString(DateInfo.F.ThisYearMonth);
         
-        List<Transaction> list = new Transaction().showRekapOfAccount(
+        List<Transaction> list = new Transaction().getListTrxOfAccount(
                 ThisYearMonth, getContext().getUserAccountNo());
         return showTransactions(list, RecapitulationHandler.ShowFlag.All);
     }
@@ -250,7 +250,7 @@ public class RecapitulationHandler extends UpdateHandler {
         getReplier().add("Show supplier transaction in " + dateInfo.getString(DateInfo.F.ThisYearMonth)).send();
         String ThisYearMonth = dateInfo.getString(DateInfo.F.ThisYearMonth);
         
-        List<Transaction> list = new Transaction().showRekapOfAccount(
+        List<Transaction> list = new Transaction().getListTrxOfAccount(
                 ThisYearMonth, getContext().getSupplierAccountNo());
         return showTransactions(list, RecapitulationHandler.ShowFlag.All);
     }
