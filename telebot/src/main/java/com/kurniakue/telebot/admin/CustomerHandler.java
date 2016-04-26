@@ -55,7 +55,8 @@ public class CustomerHandler extends UpdateHandler {
         CustomerListOffset,
         Customer,
         YearMonthSet,
-        Amount;
+        Amount,
+        Item
     }
     
     public List<Customer> getList() {

@@ -9,6 +9,7 @@ import com.kurniakue.common.Tool;
 import com.kurniakue.data.Item;
 import com.kurniakue.telebot.Command;
 import com.kurniakue.telebot.UpdateHandler;
+import com.kurniakue.telebot.admin.CustomerHandler.CTX;
 import com.pengrad.telegrambot.Replier;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +37,8 @@ public class ItemsHandler extends UpdateHandler {
     }
     
     private boolean showItems() {
-        List<Item> list = new Item().getAllItems();
+        getContext().data.put(CTX.Item, null);
+        List<Item> list = new Item().getProductList();
         Replier replier = getReplier();
         
         int count = 0;

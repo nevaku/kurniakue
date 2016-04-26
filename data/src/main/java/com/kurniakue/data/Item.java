@@ -62,6 +62,15 @@ public class Item extends Record<Item> implements Comparable<Item> {
         return getDbCollection(COLLECTION_NAME);
     }
 
+    public List<Item> getProductList() {
+        Document filter = new Document()
+                .append(F.State.name(),
+                        new Document("$ne", "NA"))
+                .append(F.ItemType.name(), "product");
+        Document sort = new Document(F.ItemName.name(), 1);
+        return loadList(this, filter, sort);
+    }
+
     public List<Item> getAllItems() {
         Document filter = new Document()
                 .append(F.State.name(),
