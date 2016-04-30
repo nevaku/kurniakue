@@ -5,6 +5,7 @@
  */
 package com.kurniakue.telebot.admin;
 
+import com.kurniakue.telebot.transaction.TransactionHandler;
 import com.kurniakue.telebot.Command;
 import com.kurniakue.telebot.HelpHandler;
 
@@ -22,13 +23,17 @@ public class AdminHelpHandler extends HelpHandler {
         return showItems();
     });
     
-    public final Command cmd_setDate = new Command(this, "/set_Date", () -> {
+    public final Command cmd_setDate = new Command(this, "/set_Tanggal", () -> {
         return setCurrentDate();
+    });
+    
+    public final Command cmd_transactions = new Command(this, "/transaksi", () -> {
+        return get(TransactionHandler.class).cmd_show.run();
     });
 
     private final Command[] adminMenu = {
         cmd(C.Help), cmd(C.Customer), cmd_items,
-        cmd_recapitulation, cmd_setDate, cmd(C.Booking)};
+        cmd_recapitulation, cmd_setDate, cmd_transactions};
 
     public AdminHelpHandler() {
         activeCommands = adminMenu;
@@ -56,15 +61,15 @@ public class AdminHelpHandler extends HelpHandler {
     }
 
     public boolean recapitulation() {
-        return getContext().transferTo(RecapitulationHandler.class);
+        return getContext().open(RecapitulationHandler.class);
     }
 
     public boolean showItems() {
         ItemsHandler handler = getContext().getHandler(ItemsHandler.class);
-        return handler.transferTo(handler.cmd_items);
+        return handler.open(handler.cmd_items);
     }
     
     private boolean setCurrentDate() {
-        return getContext().transferTo(DateHandler.class);
+        return getContext().open(DateHandler.class);
     }
 }

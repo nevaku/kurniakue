@@ -91,9 +91,9 @@ public class CustomerDetailHandler extends UpdateHandler {
     @Override
     public boolean execute() {
         if (getParams().length == 0) {
-            getContext().transferTo(UpdateHandler.C.Customer.cmd);
+            getContext().open(UpdateHandler.C.Customer.cmd);
         } else if (!getParams()[0].endsWith(";")) {
-            getContext().transferTo(UpdateHandler.C.Customer.cmd);
+            getContext().open(UpdateHandler.C.Customer.cmd);
         }
 
         return load();
@@ -155,7 +155,7 @@ public class CustomerDetailHandler extends UpdateHandler {
         } else {
             getParams()[0] = customerName + ";";
         }
-        return getContext().transferTo(handler, handler.cmd_linkTeleShow);
+        return getContext().open(handler, handler.cmd_linkTeleShow);
     }
 
     public boolean ubah() {
@@ -177,7 +177,7 @@ public class CustomerDetailHandler extends UpdateHandler {
     }
 
     public boolean balik() {
-        return CustomerHandler.of(getContext()).cmd_loadCurrentCustomerList.transfer();
+        return CustomerHandler.of(getContext()).cmd_loadCurrentCustomerList.run();
     }
 
     private boolean deactivate() {
@@ -190,18 +190,18 @@ public class CustomerDetailHandler extends UpdateHandler {
         } else {
             getParams()[0] = customerName + ";";
         }
-        return getContext().transferTo(handler, handler.cmd_show);
+        return getContext().open(handler, handler.cmd_show);
     }
 
     private boolean showTransaction() {
         getContext().data.put(CTX.Customer, customer);
         CustomerTransactionHandler handler = getContext().getHandler(CustomerTransactionHandler.class);
-        return handler.transferTo(handler.cmd_show);
+        return handler.open(handler.cmd_show);
     }
 
     private boolean showPayment() {
         getContext().data.put(CTX.Customer, customer);
         CustomerPayHandler handler = getContext().getHandler(CustomerPayHandler.class);
-        return handler.transferTo(handler.cmd_show);
+        return handler.open(handler.cmd_show);
     }
 }

@@ -92,7 +92,7 @@ public class CustomerHandler extends UpdateHandler {
         if (params.length == 0) {
             customerList = new Customer().getAllCustomers();
         } else if (params.length == 1 && params[0] != null && params[0].endsWith(";")) {
-            getContext().transferTo(CustomerDetailHandler.class);
+            getContext().open(CustomerDetailHandler.class);
             return;
         } else if (params.length >= 1) {
             customerList = new Customer().getCustomerList(params[0]);
@@ -106,7 +106,7 @@ public class CustomerHandler extends UpdateHandler {
             String customerName = customerList.get(0).getString(Customer.F.CustomerName);
             handler.setCustomerName(customerName);
             params[0] = customerName + ";";
-            getContext().transferTo(handler);
+            getContext().open(handler);
             return;
         }
         

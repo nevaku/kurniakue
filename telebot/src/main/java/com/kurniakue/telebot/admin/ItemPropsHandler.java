@@ -157,6 +157,6 @@ public class ItemPropsHandler extends UpdateHandler {
 
     private boolean showItems() {
         ItemsHandler handler = getContext().getHandler(ItemsHandler.class);
-        return handler.transferTo(handler.cmd_items);
+        return handler.open(handler.cmd_items);
     }
 }

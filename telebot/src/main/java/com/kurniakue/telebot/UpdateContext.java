@@ -173,7 +173,7 @@ public class UpdateContext {
         userAccountNo = Tool.idToNo(userMemberId);
         
         // TODO: should load from member instead of customer
-        // should transfer data from customer to member first
+        // should run data from customer to member first
         Customer member = new Customer().loadByCustomerId(userMemberId);
         memberName = member.getString(Customer.F.CustomerName);
         
@@ -249,18 +249,18 @@ public class UpdateContext {
         return (T) handler;
     }
 
-    public boolean transferTo(String id) {
+    public boolean open(String id) {
         UpdateHandler handler = registeredHandler.get(id);
 
-        return transferTo(handler);
+        return UpdateContext.this.open(handler);
     }
 
-    public boolean transferTo(Class<? extends UpdateHandler> handlerClass) {
+    public boolean open(Class<? extends UpdateHandler> handlerClass) {
         UpdateHandler handler = getHandler(handlerClass);
-        return transferTo(handler);
+        return UpdateContext.this.open(handler);
     }
 
-    public boolean transferTo(UpdateHandler handler) {
+    public boolean open(UpdateHandler handler) {
         if (handler == null) {
             return false;
         }
@@ -274,7 +274,7 @@ public class UpdateContext {
         return handler.handleCommand();
     }
 
-    public boolean transferTo(UpdateHandler handler, Command command) {
+    public boolean open(UpdateHandler handler, Command command) {
         if (handler == null) {
             return false;
         }

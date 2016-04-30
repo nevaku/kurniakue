@@ -64,7 +64,7 @@ public class Command {
         }
     }
 
-    public boolean transfer() {
-        return handler.transferTo(this);
+    public boolean run() {
+        return handler.open(this);
     }
 }

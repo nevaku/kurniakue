@@ -91,6 +91,10 @@ public class UpdateHandler {
         return true;
     });
 
+    public final Command cmd_home = new Command(this, "/awal", () -> {
+        return petunjuk();
+    });
+
     public static Map<String, UpdateHandler> createRegisteredHandler(
             Update update, UpdateContext context) {
         if (!validateMandatory(update)) {
@@ -169,6 +173,10 @@ public class UpdateHandler {
 
     public UpdateContext getContext() {
         return context;
+    }
+
+    public <T extends UpdateHandler> T get(Class<T> handlerClass) {
+        return getContext().getHandler(handlerClass);
     }
 
     private Replier replier;
@@ -318,8 +326,8 @@ public class UpdateHandler {
         return false;
     }
     
-    public boolean transferTo(Command command) {
-        return getContext().transferTo(this, command);
+    public boolean open(Command command) {
+        return getContext().open(this, command);
     }
 
     public static String[] cmdOf(Enum[] values) {
@@ -345,7 +353,7 @@ public class UpdateHandler {
     }
 
     public boolean batal() {
-        return getContext().transferTo(C.Help.cmd);
+        return getContext().open(C.Help.cmd);
     }
     
     public boolean ok() {
@@ -372,6 +380,6 @@ public class UpdateHandler {
     public boolean petunjuk() {
         setCmd(C.Help.cmd);
         setFun(C.Help.fun);
-        return getContext().transferTo(C.Help.cmd);
+        return getContext().open(C.Help.cmd);
     }
 }

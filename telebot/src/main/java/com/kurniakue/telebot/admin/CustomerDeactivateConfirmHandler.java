@@ -89,6 +89,6 @@ public class CustomerDeactivateConfirmHandler extends UpdateHandler {
         }
         
         CustomerDetailHandler handler = getContext().getHandler(CustomerDetailHandler.class);
-        return getContext().transferTo(handler, handler.cmd_show);
+        return getContext().open(handler, handler.cmd_show);
     }
 }

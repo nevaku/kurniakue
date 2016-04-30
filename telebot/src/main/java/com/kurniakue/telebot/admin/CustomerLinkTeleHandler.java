@@ -96,6 +96,6 @@ public class CustomerLinkTeleHandler extends UpdateHandler {
         } else {
             getParams()[0] = customerName + ";";
         }
-        return getContext().transferTo(CustomerDetailHandler.class);
+        return getContext().open(CustomerDetailHandler.class);
     }
 }
