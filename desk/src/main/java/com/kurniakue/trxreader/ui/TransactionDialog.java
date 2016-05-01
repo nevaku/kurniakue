@@ -211,7 +211,6 @@ public class TransactionDialog extends javax.swing.JDialog {
         customerIdCounterBox = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         amountOfTheDateBox = new javax.swing.JTextField();
-        jPanel8 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         amountOfTheMonthBox = new javax.swing.JTextField();
 
@@ -508,11 +507,11 @@ public class TransactionDialog extends javax.swing.JDialog {
         Bottom.setLayout(BottomLayout);
         BottomLayout.setHorizontalGroup(
             BottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1124, Short.MAX_VALUE)
+            .addGap(0, 975, Short.MAX_VALUE)
             .addGroup(BottomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(BottomLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1104, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 955, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         BottomLayout.setVerticalGroup(
@@ -562,18 +561,14 @@ public class TransactionDialog extends javax.swing.JDialog {
         amountOfTheDateBox.setPreferredSize(new java.awt.Dimension(100, 20));
         jPanel7.add(amountOfTheDateBox);
 
-        right.add(jPanel7);
-
-        jPanel8.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
-
         jLabel11.setText("Total Amount of the month");
         jLabel11.setPreferredSize(new java.awt.Dimension(180, 30));
-        jPanel8.add(jLabel11);
+        jPanel7.add(jLabel11);
 
         amountOfTheMonthBox.setPreferredSize(new java.awt.Dimension(100, 20));
-        jPanel8.add(amountOfTheMonthBox);
+        jPanel7.add(amountOfTheMonthBox);
 
-        right.add(jPanel8);
+        right.add(jPanel7);
 
         getContentPane().add(right, java.awt.BorderLayout.LINE_END);
 
@@ -873,7 +868,6 @@ public class TransactionDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JButton okButton;
     private javax.swing.JPopupMenu options;
@@ -1069,7 +1063,7 @@ public class TransactionDialog extends javax.swing.JDialog {
 
     private void loadTransaction(String transactionDate) {
         TransactionD transactiond = TransactionD.get();
-        List<Transaction> transactionList = transactiond.getTransactionsByDate(
+        List<Transaction> transactionList = transactiond.getTransactionsNonRkapByDate(
                 transactionDate
         );
 
@@ -1106,10 +1100,10 @@ public class TransactionDialog extends javax.swing.JDialog {
             no += 1;
         }
 
-        int amountOfTheDate = TransactionD.get().getAmountOfTheDate(transactionDate);
+        int amountOfTheDate = TransactionD.get().getAmountNonRkapOfTheDate(transactionDate);
         amountOfTheDateBox.setText(Tool.formatMoney(amountOfTheDate));
 
-        int amountOfTheMonth = TransactionD.get().getAmountOfTheMonth(transactionDate);
+        int amountOfTheMonth = TransactionD.get().getAmountNonRkapOfTheMonth(transactionDate);
         amountOfTheMonthBox.setText(Tool.formatMoney(amountOfTheMonth));
     }
 

@@ -127,6 +127,32 @@ public class TransactionD extends Persistor {
         return list;
     }
 
+    public List<Transaction> getTransactionsNonRkapByDate(String dateStr) {
+        List<Transaction> list = new ArrayList<>();
+        if (dateStr == null) {
+            return list;
+        }
+        DBCursor cursor;
+        if ("".equals(dateStr)) {
+            cursor = transactions.find();
+        } else {
+            cursor = transactions.find(
+                    new BasicDBObject(F.Date.name(), dateStr)
+                    .append(F.ItemNo.name(), new BasicDBObject("$ne", "RKAP"))
+            );
+        }
+        cursor.sort(new BasicDBObject(F.TransactionID.name(), 1));
+
+        while (cursor.hasNext()) {
+            DBObject dbobject = cursor.next();
+            Transaction transaction = new Transaction();
+            transaction.putAll(dbobject.toMap());
+            list.add(transaction);
+        }
+
+        return list;
+    }
+
     public void fixAmount(String dateStr) {
         DBCursor cursor;
         if (dateStr == null || "".equals(dateStr)) {
@@ -143,14 +169,15 @@ public class TransactionD extends Persistor {
         }
     }
 
-    public int getAmountOfTheDate(String dateStr) {
+    public int getAmountNonRkapOfTheDate(String dateStr) {
         int amount = 0;
 
         DBCursor cursor;
         if (dateStr == null || "".equals(dateStr)) {
             cursor = transactions.find();
         } else {
-            cursor = transactions.find(new BasicDBObject(F.Date.name(), dateStr));
+            cursor = transactions.find(new BasicDBObject(F.Date.name(), dateStr)
+                    .append(F.ItemNo.name(), new BasicDBObject("$ne", "RKAP")));
         }
         while (cursor.hasNext()) {
             DBObject query = cursor.next();
@@ -161,23 +188,24 @@ public class TransactionD extends Persistor {
         return amount;
     }
 
-    public int getAmountOfTheMonth(String dateStr) {
+    public int getAmountNonRkapOfTheMonth(String dateStr) {
         int amount = 0;
-
-        DBCursor cursor = transactions.find();
-
-        String monthStr;
+        String yearMonth;
         if (dateStr == null || "".equals(dateStr) || dateStr.length() < 10) {
-            monthStr = "";
+            yearMonth = "";
         } else {
-            monthStr = dateStr.substring(0, 7);
+            yearMonth = dateStr.substring(0, 7);
         }
+
+        DBCursor cursor = transactions.find(
+                new BasicDBObject("Date",
+                        new BasicDBObject("$regex", yearMonth + ".*").append("$options", "i"))
+                .append(F.ItemNo.name(), new BasicDBObject("$ne", "RKAP")));
+
         while (cursor.hasNext()) {
             DBObject query = cursor.next();
-            if (Tool.tstr(query.get(F.Date.name())).startsWith(monthStr)) {
-                if (Tool.tint(query.get(F.DCFlag.name())) < 0) {
-                    amount += Tool.tint(query.get(F.Amount.name()));
-                }
+            if (Tool.tint(query.get(F.DCFlag.name())) < 0) {
+                amount += Tool.tint(query.get(F.Amount.name()));
             }
         }
         return amount;
@@ -225,35 +253,32 @@ public class TransactionD extends Persistor {
                 b("Date", b("$regex", yearMonth + ".*").append("$options", "i"))
                 .append("CustomerName", customerName)
         ).sort(b("Date", 1));
-        
+
         int total = 0;
         while (cursor.hasNext()) {
             DBObject result = cursor.next();
             Transaction transaction = new Transaction();
             transaction.putAll(result.toMap());
-            
+
             int count = transaction.getInt(Transaction.F.Count);
             int amount = -transaction.getInt(Transaction.F.Amount);
             int dcflag = transaction.getInt(Transaction.F.DCFlag);
             total += (amount * dcflag);
             String samount;
-            if (count > 1)
-            {
-                samount = count + " x @" + 
-                          Tool.formatNumber(transaction.getInt(Transaction.F.Price))
-                          + " = " + 
-                          Tool.formatNumber(amount * dcflag);
-            }
-            else
-            {
+            if (count > 1) {
+                samount = count + " x @"
+                        + Tool.formatNumber(transaction.getInt(Transaction.F.Price))
+                        + " = "
+                        + Tool.formatNumber(amount * dcflag);
+            } else {
                 samount = Tool.formatNumber(amount * dcflag);
             }
             System.out.println(transaction.getString(Transaction.F.Date)
                     + " " + transaction.getString(Transaction.F.ItemName)
-                    + ": " + samount 
+                    + ": " + samount
             );
         }
-        
+
         System.out.println("Total: " + Tool.formatMoney(total));
     }
 
@@ -268,8 +293,8 @@ public class TransactionD extends Persistor {
                 b("_id", "$CustomerName").
                 append("total",
                         b("$sum", "$Amount")
-                      )
                 )
+        )
         );
         AggregationOutput output = transactions.aggregate(list);
         for (Iterator iterator = output.results().iterator(); iterator.hasNext();) {

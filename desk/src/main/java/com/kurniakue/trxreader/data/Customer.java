@@ -98,7 +98,7 @@ public class Customer extends Record implements Comparable<Customer> {
                     * transaction.getInt(Transaction.F.DCFlag);
             String item = transaction.tstr(Transaction.F.ItemNo)
                     + "-" + transaction.tstr(Transaction.F.ItemName);
-            if (amount > 0) {
+            if (amount > 0 && "CASH".equals(transaction.tstr(Transaction.F.ItemNo))) {
                 item = "Bayar, trims :)";
             }
             item = (item + Common.SUBCAT_BLANKS).substring(0, Common.SUBCAT_LENGTH);
