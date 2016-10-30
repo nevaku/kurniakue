@@ -37,6 +37,7 @@ public class Common {
     public static final DefaultEnumField _id = new DefaultEnumField("_id");
     public static final String CASH = "CASH";
     public static final String RKAP = "RKAP";
+    public static final String TRAN = "TRAN";
     public static final String templateJumlah = "        Jumlah";
     public static int CustNo = 0;
     public static final String accountsDir = driveDir + "/Accounts";
