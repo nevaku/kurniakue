@@ -6,6 +6,8 @@
 package com.pengrad.telegrambot;
 
 import com.pengrad.telegrambot.model.Update;
+import com.pengrad.telegrambot.model.request.InputFile;
+import com.pengrad.telegrambot.model.request.InputFileBytes;
 import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup;
 import java.util.List;
@@ -38,6 +40,18 @@ public class Replier {
         return this;
     }
     
+    public Replier sendImg(byte[] bytes, String fileName)
+    {
+        if (!validate())
+        {
+            return this;
+        }
+        InputFileBytes photo = new InputFileBytes("image/jpeg", bytes, fileName);
+        bot.sendPhoto(update.message().chat().id(), photo, reply.toString(), MAX_LENGTH, replyMarkup);
+        reset();
+        return this;
+    }
+    
     public Replier addLine(Object object) {
         return addLine(String.valueOf(object));
     }
@@ -60,12 +74,22 @@ public class Replier {
         reply = new StringBuilder(1000);
         replyMarkup = null;
     }
-
-    public Replier send() {
+    
+    public boolean validate()
+    {
         if (update.message() == null) {
-            return this;
+            return false;
         }
         if (update.message().chat() == null) {
+            return false;
+        }
+        
+        return true;
+    }
+
+    public Replier send() {
+        if (!validate())
+        {
             return this;
         }
         if (reply.length() == 0) {

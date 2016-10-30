@@ -32,11 +32,14 @@ public class Customer extends Record implements Comparable<Customer> {
     public long total = 0;
     public long totalDebit = 0;
     public long totalCredit = 0;
+    public long totalRekap = 0;
+    public long totalBuy = 0;
+    public long totalPay = 0;
     //private final Record saldoRecord = new Record();
     //private int saldo = 0;
 
     public Customer() {
-        
+
     }
 
     public Customer(String name) {
@@ -54,7 +57,6 @@ public class Customer extends Record implements Comparable<Customer> {
 //        saldo += Common.tlong(transaction.get(Transaction.F.Amount));
 //        saldoRecord.put(Saldo.F.Amount, saldo);
 //    }
-
     @Override
     public String toString() {
         return "{" + getString(F.CustomerName) + ": " + id + ":" + transactions.toString() + "}\n";
@@ -121,7 +123,6 @@ public class Customer extends Record implements Comparable<Customer> {
         sb.append("Untuk Kritik/Saran/Pesanan Silakan Hubungi \n");
         sb.append("Dina/Harun \n");
         sb.append("HP/WA/Telegram: +62 896 5297 3311, +62 896 5297 3300 \n");
-        sb.append("PIN BBM: 7CF5 4549, 7424 B588 \n");
         sb.append("email: kurniakue@gmail.com;harun-1020015@infolink.co.id \n");
         sb.append("\n");
         sb.append("Trims,\n");
@@ -164,6 +165,12 @@ public class Customer extends Record implements Comparable<Customer> {
         sb.append("Kredit");
         sb.append(",");
         sb.append("Debit");
+        sb.append(",");
+        sb.append("Rekap-1");
+        sb.append(",");
+        sb.append("Bayar-1");
+        sb.append(",");
+        sb.append("Beli-1");
         sb.append("\n");
         Common.outputSbToFile(sb, pathListCsv);
     }
@@ -178,6 +185,12 @@ public class Customer extends Record implements Comparable<Customer> {
         sb.append(-totalCredit);
         sb.append(",");
         sb.append(totalDebit);
+        sb.append(",");
+        sb.append(totalRekap);
+        sb.append(",");
+        sb.append(totalPay);
+        sb.append(",");
+        sb.append(totalBuy);
         sb.append("\n");
         Common.outputSbToFile(sb, pathListCsv);
     }
@@ -190,7 +203,7 @@ public class Customer extends Record implements Comparable<Customer> {
     }
 
     public void addTrx(Transaction transaction) {
-        long trxAmount = transaction.getInt(Transaction.F.Amount) 
+        long trxAmount = transaction.getInt(Transaction.F.Amount)
                 * transaction.getInt(Transaction.F.DCFlag);
         transactions.add(transaction);
         total += trxAmount;
@@ -198,6 +211,18 @@ public class Customer extends Record implements Comparable<Customer> {
             totalCredit += trxAmount;
         } else {
             totalDebit += trxAmount;
+        }
+
+        if ("RKAP".equalsIgnoreCase(transaction.getString(Transaction.F.ItemNo))) {
+            totalRekap += trxAmount;
+        } else if ("CASH".equalsIgnoreCase(transaction.getString(Transaction.F.ItemNo))) {
+            totalPay += trxAmount;
+        } else if ("LIBUR".equalsIgnoreCase(transaction.getString(Transaction.F.ItemNo))) {
+            System.out.println("Skip: " + transaction.getString(Transaction.F.ItemNo));
+        } else if (trxAmount >= 0) {
+            throw new RuntimeException("Uncategorized transaction");
+        } else {
+            totalBuy += trxAmount;
         }
     }
 

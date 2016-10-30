@@ -33,7 +33,13 @@ public class CustomerPayHandler extends UpdateHandler {
         return show();
     });
 
-    private final Command[] menu = {cmd_home, cmd_back, cmd_nihil};
+    public final Command cmd_payAll = new Command(this, "/lunas", () -> {
+        return payAll();
+    });
+
+    private final Command[] menu = {
+        cmd_payAll, cmd_nihil, cmd_nihil,
+        cmd_home, cmd_back, cmd_nihil};
 
     public Customer getCustomer() {
         return getContext().data.getAs(CTX.Customer);
@@ -74,8 +80,14 @@ public class CustomerPayHandler extends UpdateHandler {
     public boolean show() {
         getReplier()
                 .addLine("Masukkan nilai pembayarannya (tanpa titik dan koma)")
+                .addLine("nilai [tgl: yyyy-MM-dd (boleh sebagian)]")
                 .keyboard(cmdOf(menu))
                 .send();
+        return true;
+    }
+
+    private boolean payAll() {
+        
         return true;
     }
 

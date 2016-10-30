@@ -26,7 +26,7 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
     public enum F implements EnumField {
 
         _id,
-        TransactionID, Date, Category, Subcategory, Description,
+        TransactionID, Date, Description,
         CustomerID, CustomerName,
         ItemNo, ItemName, Price,
         Count, Amount, DCFlag,
@@ -63,7 +63,7 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
         sb.append(getString(F.ItemNo)).append(", ");
         sb.append(getString(F.ItemName)).append(", ");
         sb.append(getString(F.Amount)).append(", ");
-        
+
         List<TrxAccount> trxAccounts_ = getTrxAccounts();
         if (trxAccounts_ != null) {
             sb.append("[");
@@ -225,6 +225,24 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
         }
     }
 
+//    public void transfer() {
+//        int trxId = DbProp.getAndInc(N.LastTransactionID);
+//        put(F.TransactionID, trxId);
+//
+//        String date = dateInfo.getString(DateInfo.F.ThisYearMonth) + "-01";
+//        put(F.Date, date);
+//
+//        put(F.CustomerID, customer.getString(Customer.F.CustomerID));
+//        put(F.CustomerName, customer.getString(Customer.F.CustomerName));
+//        put(F.ItemNo, item.getString(Item.F.ItemNo));
+//        put(F.ItemName, itemName);
+//        put(F.Price, amount);
+//        put(F.Count, 1);
+//        put(F.Amount, amount);
+//        put(F.DCFlag, dcFlag);
+//        store();
+//    }
+
     public Transaction deleteRekapOf(String customerName, String yearMonth) {
         Document filter = new Document()
                 .append(F.Date.name(),
@@ -235,27 +253,29 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
 
         return delete(filter);
     }
-    
+
     private List<TrxAccount> trxAccounts;
-    
+
     public List<TrxAccount> getTrxAccounts() {
         if (trxAccounts != null) {
             return trxAccounts;
         }
-        
+
         trxAccounts = new ArrayList<>();
-        
+
         List<Document> trxdocs = (List<Document>) get(F.TrxAccounts);
         if (trxdocs == null) {
+            put(F.TrxAccounts, trxAccounts);
             return trxAccounts;
         }
-        
+
         for (Document trxdoc : trxdocs) {
             TrxAccount trxAccount = new TrxAccount();
             trxAccount.putAll(trxdoc);
             trxAccounts.add(trxAccount);
         }
-        
+
+        put(F.TrxAccounts, trxAccounts);
         return trxAccounts;
     }
 
@@ -288,15 +308,15 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
 
         List<Transaction> list = Transaction.loadList(new Transaction(), filter, sort);
         TrxAccount trxaccount;
-        
+
         int updateCounter = 0;
         for (Transaction transaction : list) {
             List<TrxAccount> trxAccounts = transaction.getTrxAccounts();
-            if (!trxAccounts.isEmpty())
-            {
+            //trxAccounts.clear();
+            if (!trxAccounts.isEmpty()) {
                 continue;
             }
-            
+
             updateCounter += 1;
 
             if (CASH.equals(transaction.getString(F.ItemNo))) {
@@ -344,11 +364,11 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
     }
 
     private void saveTrxAccounts(List<TrxAccount> trxAccounts) {
-        UpdateResult result = getCollection().updateOne(getFilter(), 
+        UpdateResult result = getCollection().updateOne(getFilter(),
                 new Document("$set", new Document()
                         .append(F.TrxAccounts.name(), trxAccounts)
                 ));
-        
+
         if (result.getMatchedCount() == 0 || result.getModifiedCount() > 0) {
             System.out.println(result.toString());
             System.out.println(this);
@@ -361,35 +381,32 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
                         new Document("$regex", yearMonth + ".*")
                         .append("$options", "i"))
                 .append(F.TrxAccounts.name(),
-                        new Document("$elemMatch", 
+                        new Document("$elemMatch",
                                 new Document(TrxAccount.F.AccountNo.name(), accountNo)));
-        
+
         long balance = 0;
         long debit = 0;
         long credit = 0;
-        
+
         List<Transaction> retlist = new ArrayList<>();
-        
+
         Transaction trx;
-        
+
         List<Transaction> list = loadList(this, filter, null);
         for (Transaction transaction : list) {
             List<TrxAccount> curTrxAccounts = transaction.getTrxAccounts();
             for (TrxAccount trxAccount : curTrxAccounts) {
-                if (trxAccount.getLong(TrxAccount.F.AccountNo) == accountNo)
-                {
+                if (trxAccount.getLong(TrxAccount.F.AccountNo) == accountNo) {
                     long amount = trxAccount.getLong(TrxAccount.F.Amount);
                     int dcflag = trxAccount.getInt(TrxAccount.F.DCFlag);
-                    if (dcflag == 1)
-                    {
-                        debit += amount;                        
-                    }
-                    else {
+                    if (dcflag == 1) {
+                        debit += amount;
+                    } else {
                         credit += amount;
                     }
-                    
+
                     balance += (amount * dcflag);
-                    
+
                     String remarks = transaction.getString(F.Date)
                             + " - " + transaction.getString(F.ItemName)
                             + " - " + transaction.getString(F.CustomerName);

@@ -5,9 +5,19 @@
  */
 package com.kurniakue.telebot.admin;
 
+import com.kurniakue.common.Tool;
 import com.kurniakue.telebot.transaction.TransactionHandler;
 import com.kurniakue.telebot.Command;
 import com.kurniakue.telebot.HelpHandler;
+import java.awt.GraphicsDevice;
+import java.awt.MouseInfo;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.util.Date;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -30,10 +40,16 @@ public class AdminHelpHandler extends HelpHandler {
     public final Command cmd_transactions = new Command(this, "/transaksi", () -> {
         return get(TransactionHandler.class).cmd_show.run();
     });
+    
+    public final Command cmd_capture = new Command(this, "/capture", () -> {
+        return capture();
+    });
 
     private final Command[] adminMenu = {
         cmd(C.Help), cmd(C.Customer), cmd_items,
-        cmd_recapitulation, cmd_setDate, cmd_transactions};
+        cmd_recapitulation, cmd_setDate, cmd_transactions,
+        cmd_capture, cmd_nihil, cmd_nihil
+    };
 
     public AdminHelpHandler() {
         activeCommands = adminMenu;
@@ -71,5 +87,25 @@ public class AdminHelpHandler extends HelpHandler {
     
     private boolean setCurrentDate() {
         return getContext().open(DateHandler.class);
+    }
+    
+    private boolean capture() {
+        try {
+            GraphicsDevice currentDevice = MouseInfo.getPointerInfo().getDevice();
+            Rectangle bounds = currentDevice.getDefaultConfiguration().getBounds();
+            System.out.println(bounds);
+            Robot robot = new Robot(currentDevice);
+            BufferedImage capture = robot.createScreenCapture(bounds);
+            System.out.println(capture);
+            try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                ImageIO.write(capture, "jpg", baos);
+                String fileName = "sc-" + Tool.formatDate(new Date(), "yyyyMMdd-HHmmss") + ".jpg";
+                getReplier().sendImg(baos.toByteArray(), fileName);
+
+            }
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
+        return true;
     }
 }

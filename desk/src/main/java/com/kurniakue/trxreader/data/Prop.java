@@ -72,4 +72,14 @@ public class Prop extends Record implements Comparable<Prop> {
         prop.put(F.PropertyValue, value);
         PropD.get().persist(prop);
     }
+
+    public static int getNewTransactionId() {
+        int trxId = Prop.getInt(N.LastTransactionID);
+        if (trxId < 0) {
+            trxId = 0;
+        }
+        trxId += 1;
+        Prop.store(N.LastTransactionID, trxId);
+        return trxId;
+    }
 }

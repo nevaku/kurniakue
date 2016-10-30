@@ -93,7 +93,7 @@ public class CustomerDetailHandler extends UpdateHandler {
         if (getParams().length == 0) {
             getContext().open(UpdateHandler.C.Customer.cmd);
         } else if (!getParams()[0].endsWith(";")) {
-            getContext().open(UpdateHandler.C.Customer.cmd);
+            return getContext().open(UpdateHandler.C.Customer.cmd);
         }
 
         return load();

@@ -15,10 +15,55 @@ public class Transaction extends Record {
 
     public enum F implements EnumField {
 
-        TransactionID, Date, Category, Subcategory, Description, 
-        CustomerID, CustomerName,
-        ItemNo, ItemName, Price,
-        Count, Amount, DCFlag;
+        /**
+         * Auto generated from Prop
+         */
+        TransactionID, 
+        /**
+         * Date of transaction yyyy-MM-dd
+         */
+        Date, 
+        /**
+         * Information about the transaction
+         */
+        Description, 
+        /**
+         * ID of customer from {@link Customer$F#CustomerID}
+         */
+        CustomerID, 
+        /**
+         * {@link Customer$F#CustomerName} at the transaction done.
+         * This will not changed when customer change its name
+         */
+        CustomerName,
+        /**
+         * {@link Item$F#ItemNo}
+         */
+        ItemNo, 
+        /**
+         * {@link Item$F#ItemName} at the transaction done.
+         * This will not changed when item's name is modified
+         */
+        ItemName, 
+        /**
+         * {@link Item$F#Price} at the transaction done.
+         * This will not changed when item's price is modified
+         */
+        Price,
+        /**
+         * The number of items in transaction
+         */
+        Count, 
+        /**
+         * The amount of transactions = Price x Count 
+         */
+        Amount, 
+        /**
+         * From supplier perspective. 
+         * 1 mean debit to supplier
+         * -1 mean credit from supplier
+         */
+        DCFlag;
         
         public String fieldName;
 

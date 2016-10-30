@@ -24,6 +24,14 @@ public class ItemsHandler extends UpdateHandler {
         return showItems();
     });
 
+    public final Command cmd_products = new Command(this, "/products", () -> {
+        return showItems();
+    });
+
+    public final Command cmd_all_items = new Command(this, "/all", () -> {
+        return showAllItems();
+    });
+
     public ItemsHandler() {
     }
 
@@ -31,14 +39,28 @@ public class ItemsHandler extends UpdateHandler {
     public boolean execute() {
         if ("/items".equals(getCmd())) {
             return showItems();
+        } else if ("/products".equals(getCmd())) {
+            return showItems();
+        } else if ("/all".equals(getCmd())) {
+            return showAllItems();
         } else {
             return showItemProps();
         }
     }
     
+    private boolean showAllItems() {
+        getContext().data.put(CTX.Item, null);
+        List<Item> list = new Item().getAllItems();
+        return displayItems(list);
+    }
+    
     private boolean showItems() {
         getContext().data.put(CTX.Item, null);
         List<Item> list = new Item().getProductList();
+        return displayItems(list);
+    }
+    
+    private boolean displayItems(List<Item> list) {
         Replier replier = getReplier();
         
         int count = 0;
@@ -53,7 +75,7 @@ public class ItemsHandler extends UpdateHandler {
             replier.add(Tool.formatMoney(price));
         }
         
-        replier.keyboard(C.Home.cmd);
+        replier.keyboard(C.Home.cmd, cmd_all_items.getCmd(), cmd_products.getCmd());
         replier.send();
         
         return true;
