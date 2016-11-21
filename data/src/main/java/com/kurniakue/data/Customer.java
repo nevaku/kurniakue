@@ -113,12 +113,7 @@ public class Customer extends Record<Customer> implements Comparable<Customer> {
     public String getInfoSaldoOfTransaction(List<Transaction> trxList) {
         String infoSaldo;
 
-        int total = 0;
-        for (Transaction transaction : trxList) {
-            int amount = transaction.getInt(Transaction.F.Amount);
-            int dcflag = transaction.getInt(Transaction.F.DCFlag);
-            total += (amount * dcflag);
-        }
+        int total = getBalanceOfTransaction(trxList);
 
         if (total < 0) {
             infoSaldo = "Tagihan: " + Tool.formatMoney(-total);
@@ -129,6 +124,22 @@ public class Customer extends Record<Customer> implements Comparable<Customer> {
         }
 
         return infoSaldo;
+    }
+
+    public int getBalance() {
+        List<Transaction> trxList = getTransactionList();
+        return getBalanceOfTransaction(trxList);
+    }
+
+    public int getBalanceOfTransaction(List<Transaction> trxList) {
+        int total = 0;
+        for (Transaction transaction : trxList) {
+            int amount = transaction.getInt(Transaction.F.Amount);
+            int dcflag = transaction.getInt(Transaction.F.DCFlag);
+            total += (amount * dcflag);
+        }
+
+        return total;
     }
 
     public Customer loadByCustomerId(String customerId) {
