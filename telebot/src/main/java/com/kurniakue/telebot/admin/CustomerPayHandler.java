@@ -87,7 +87,9 @@ public class CustomerPayHandler extends UpdateHandler {
     }
 
     private boolean payAll() {
-        
+        String date = DateInfo.getDateInfo(Calendar.getInstance())
+                    .getString(DateInfo.F.Today);
+        savePayment(-getAmount(), date);
         return true;
     }
 
@@ -121,8 +123,14 @@ public class CustomerPayHandler extends UpdateHandler {
             }
         }
 
-        getCustomer().savePayment(amount, date);
+        savePayment(amount, date);
 
+        return true;
+    }
+
+    private void savePayment(int amount, String date) {
+        getCustomer().savePayment(amount, date);
+        
         getReplier()
                 .addLine("Pembayaran/setoran dari ").add(getCustomerName())
                 .addLine("Senilai ").add(Tool.formatNumber(amount))
@@ -131,8 +139,6 @@ public class CustomerPayHandler extends UpdateHandler {
 
         getReplier().send();
         backToCustomerDetail();
-
-        return true;
     }
 
     public boolean backToCustomerDetail() {
