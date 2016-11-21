@@ -54,10 +54,15 @@ public class CustomerDetailHandler extends UpdateHandler {
         return showPayment();
     });
 
+    public final Command cmd_payAll = new Command(this, "/lunas", () -> {
+        return payAll();
+    });
+
     //private final C[] customerMenu = {C.LinkTele, C.Edit, C.Delete, C.Home, C.Back, C.New};
     private final Command[] customerDetailMenu = {
         cmd(C.LinkTele), cmd(C.Edit), cmd(C.Delete),
         cmd_deactivate, cmd_Transaction, cmd_Pay,
+        cmd_payAll, cmd_nihil, cmd_nihil,
         cmd(C.Home), cmd(C.Back), cmd(C.New)};
 
     public static CustomerDetailHandler of(UpdateContext context) {
@@ -203,5 +208,12 @@ public class CustomerDetailHandler extends UpdateHandler {
         getContext().data.put(CTX.Customer, customer);
         CustomerPayHandler handler = getContext().getHandler(CustomerPayHandler.class);
         return handler.open(handler.cmd_show);
+    }
+
+    private boolean payAll() {
+        getContext().data.put(CTX.Customer, customer);
+        getContext().data.put(CTX.Amount, customer.getBalance());
+        CustomerPayHandler handler = getContext().getHandler(CustomerPayHandler.class);
+        return handler.open(handler.cmd_payAll);
     }
 }
