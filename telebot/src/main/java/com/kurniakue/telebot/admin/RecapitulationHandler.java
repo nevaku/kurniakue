@@ -5,6 +5,7 @@
  */
 package com.kurniakue.telebot.admin;
 
+import com.kurniakue.common.EnumField;
 import com.kurniakue.common.Tool;
 import com.kurniakue.data.DateInfo;
 import com.kurniakue.data.Record;
@@ -14,6 +15,7 @@ import com.kurniakue.telebot.UpdateContext;
 import com.kurniakue.telebot.UpdateHandler;
 import com.pengrad.telegrambot.Replier;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
@@ -147,6 +149,45 @@ public class RecapitulationHandler extends UpdateHandler {
         List<Record> list = new Transaction().getRekapOfMonthPerCustomer(ThisYearMonth);
         return showTransactions(list, ShowFlag.All);
     }
+
+    private Sorter sort(List<? extends Record> list) {
+        return new Sorter(list);
+    }
+
+    private static class Sorter {
+        List<? extends Record> list;
+
+        public Sorter() {
+        }
+
+        private Sorter(List<? extends Record> list) {
+            this.list = list;
+        }
+        
+        EnumField field;
+
+        private Sorter by(Transaction.F field) {
+            this.field = field;
+            return this;
+        }
+
+        private void go() {
+            if (list == null)
+            {
+                System.out.println("no list");
+                return;
+            }
+            if (field == null)
+            {
+                System.out.println("no field");
+                return;
+            }
+            
+            Collections.sort(list, (Record record1, Record record2) -> {
+                return record1.getString(field).compareTo(record2.getString(field));
+            });
+        }
+    }
     
     private enum ShowFlag {
         All,
@@ -241,6 +282,7 @@ public class RecapitulationHandler extends UpdateHandler {
         
         List<Transaction> list = new Transaction().getListTrxOfAccount(
                 ThisYearMonth, getContext().getUserAccountNo());
+        sort(list).by(Transaction.F.CustomerName).go();
         return showTransactions(list, RecapitulationHandler.ShowFlag.All);
     }
     
