@@ -5,7 +5,6 @@
  */
 package com.kurniakue.telebot;
 
-import com.kurniakue.common.Common;
 import com.kurniakue.common.Tool;
 import com.kurniakue.data.DbProp;
 import com.kurniakue.data.KurniaKueDb;
@@ -38,6 +37,23 @@ public class Main {
 
     private static TelegramBot bot;
     private static TheConfig config;
+    
+    public static void start(String[] args) throws Exception {
+        started.set(true);
+        config = KurniaKueDb.getConfig();
+        if (args.length == 0) {
+            args = new String[]{"c:/harun/cfg/telebot.conf"};
+        }
+        String configPath = args[0];
+        System.out.println("Config path: " + configPath);
+        config.load(configPath);
+        startBotting();
+    }
+    
+    public static void stop(String[] args) throws Exception {
+        started.set(false);        
+        disconnectDb();
+    }
 
     public static void main(String[] args) throws Exception {
         started.set(true);
