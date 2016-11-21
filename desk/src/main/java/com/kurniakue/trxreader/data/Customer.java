@@ -219,8 +219,8 @@ public class Customer extends Record implements Comparable<Customer> {
             totalPay += trxAmount;
         } else if ("LIBUR".equalsIgnoreCase(transaction.getString(Transaction.F.ItemNo))) {
             System.out.println("Skip: " + transaction.getString(Transaction.F.ItemNo));
-        } else if (trxAmount >= 0) {
-            throw new RuntimeException("Uncategorized transaction");
+//        } else if (trxAmount >= 0) {
+//            throw new RuntimeException("Uncategorized transaction: " + transaction.getString(Transaction.F.ItemNo));
         } else {
             totalBuy += trxAmount;
         }
