@@ -71,6 +71,7 @@ public class Common {
         {
             put("HarunMip", "Admin");
             put("DinaKS", "Admin,Supplier");
+            put("TakDikenal", "Customer");
         }
     };
     
