@@ -165,11 +165,24 @@ public class UpdateContext {
         message = update.message();
         chat = message.chat();
         userName = chat.username();
-        userGroups = Arrays.asList(GroupMember.get(userName).split(","));
+        if (userName == null)
+        {
+            userName = "TakDikenal";
+        }
+        String groupMember = GroupMember.get(userName);
+        if (groupMember == null)
+        {
+            groupMember = "Customer";
+        }
+        userGroups = Arrays.asList(groupMember.split(","));
         if (userGroups == null) {
             userGroups = GROUP_CUSTOMER;
         }
         userMemberId = MemberIdOf.get(userName);
+        if (userMemberId == null)
+        {
+            userMemberId = "TN000";
+        }
         userAccountNo = Tool.idToNo(userMemberId);
         
         // TODO: should load from member instead of customer
