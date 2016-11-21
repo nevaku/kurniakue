@@ -6,6 +6,7 @@
 package com.kurniakue.telebot;
 
 import com.kurniakue.common.Tool;
+import static com.kurniakue.common.Tool.isBlank;
 import static com.kurniakue.common.Tool.neo;
 import com.kurniakue.telebot.admin.CustomerHandler;
 import com.kurniakue.telebot.admin.AdminHelpHandler;
@@ -314,7 +315,7 @@ public class UpdateHandler {
     
     public boolean executeActiveCommand() {
         for (Command command : getActiveCommands()) {
-            if (command.getCmd().equals(getCmd())) {
+            if (!isBlank(command.getCmd()) && command.getCmd().equals(getCmd())) {
                 return command.exec();
             }
         }
