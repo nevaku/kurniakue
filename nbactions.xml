@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-release:prepare</actionName>
+            <displayName>release:prepare</displayName>
+            <goals>
+                <goal>release:prepare</goal>
+            </goals>
+        </action>
+        <action>
+            <actionName>CUSTOM-release:update-versions</actionName>
+            <displayName>release:update-versions</displayName>
+            <goals>
+                <goal>release:update-versions</goal>
+            </goals>
+        </action>
+    </actions>
