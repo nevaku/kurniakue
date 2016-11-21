@@ -1,0 +1,8 @@
+[2016-11-22 05:15:01] [info]  [22504] Commons Daemon procrun (1.0.15.0 64-bit) started
+[2016-11-22 05:15:01] [info]  [22504] Service TelebotService name Telebot Service
+[2016-11-22 05:15:01] [info]  [22504] Service 'TelebotService' installed
+[2016-11-22 05:15:01] [info]  [22504] Commons Daemon procrun finished
+[2016-11-22 05:16:12] [info]  [ 7720] Commons Daemon procrun (1.0.15.0 64-bit) started
+[2016-11-22 05:16:12] [info]  [ 7720] Running 'TelebotService' Service...
+[2016-11-22 05:16:12] [info]  [ 3412] Starting service...
+[2016-11-22 05:16:13] [info]  [ 3412] Service started in 1148 ms.
