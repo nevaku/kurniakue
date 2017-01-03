@@ -24,10 +24,6 @@ public class InfoHandler extends UpdateHandler
     {
         replier.add("Mau lihat info apa? \n");
         String[] infoList = {"/saldo", "/jadwal"};
-        for (String info : infoList)
-        {
-            replier.add(info).add("\n");
-        }
         
         replier.keyboard(infoList);
         replier.send();
