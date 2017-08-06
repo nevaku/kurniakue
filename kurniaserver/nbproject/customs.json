@@ -1,0 +1,36 @@
+{
+    "elements": {
+        "b-carousel-slide": {
+            "attributes": {
+                "img": {},
+                "background": {},
+                "caption": {},
+                "text": {},
+                "height": {}
+            }
+        },
+        "todo-item": {
+            "attributes": {
+                "v-for": {},
+                "v-bind:todo": {},
+                "v-bind:key": {}
+            }
+        },
+        "b-carousel": {
+            "attributes": {
+                "controls": {}
+            }
+        }
+    },
+    "attributes": {
+        "integrity": {
+            "context": "link"
+        },
+        "v-on:click": {
+            "context": "button"
+        },
+        "v-model": {
+            "context": "input"
+        }
+    }
+}

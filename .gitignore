@@ -14,3 +14,5 @@ hs_err_pid*
 target/
 /common/nbproject/
 *.log
+/kurniaserver/build/
+/kurniaserver/nbproject/private/
