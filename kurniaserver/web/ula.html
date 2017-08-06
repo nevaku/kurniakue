@@ -25,32 +25,45 @@ and open the template in the editor.
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     </head>
     <body>
-
-        <h1>Kurnia Kue - Layanan On Line</h1>
-        <h5>Kue - Roti - Gorengan</h5>
-        <div id="app">
-            <p>{{ message }}</p>
-            <button v-on:click="reverseMessage">Reverse Message</button>
-        </div>
-        <div id="app-6">
-            <p>{{ message }}</p>
-            <input v-model="message">
-        </div>
-
-        <div id="app-todo" class="container">
-            <ol>
-                <!--
-                  Now we provide each todo-item with the todo object
-                  it's representing, so that its content can be dynamic.
-                  We also need to provide each component with a "key",
-                  which will be explained later.
-                -->
-                <todo-item
-                    v-for="item in groceryList"
-                    v-bind:todo="item"
-                    v-bind:key="item.id">
-                </todo-item>
-            </ol>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-4 col-md-3 col-lg-2">
+                    <h1>Kurnia Kue</h1>
+                </div>
+                <div class="col-sm-8 col-md-9 col-lg-10">
+                    <h1><small>Layanan On Line</small></h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <h4>Kue - Roti - Gorengan</h4>
+                </div>
+            </div>
+            <div id="app" class="row">
+                <div class="col-sm-2">
+                    <p>{{ message }}</p>
+                </div>
+                <div class="col-sm-3">
+                    <button v-on:click="reverseMessage">Reverse Message</button>
+                </div>
+            </div>
+            <div class="row">
+                <div id="app-todo" class="col-xs-6">
+                    <ol>
+                        <!--
+                          Now we provide each todo-item with the todo object
+                          it's representing, so that its content can be dynamic.
+                          We also need to provide each component with a "key",
+                          which will be explained later.
+                        -->
+                        <todo-item
+                            v-for="item in groceryList"
+                            v-bind:todo="item"
+                            v-bind:key="item.id">
+                        </todo-item>
+                    </ol>
+                </div>
+            </div>
         </div>
     </body>
 </html>

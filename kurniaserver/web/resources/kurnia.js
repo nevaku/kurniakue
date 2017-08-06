@@ -11,13 +11,6 @@ $(function () {
         }
     });
 
-    new Vue({
-        el: '#app-6',
-        data: {
-            message: 'Hello Vue!'
-        }
-    });
-
     Vue.component('todo-item', {
         // The todo-item component now accepts a
         // "prop", which is like a custom attribute.
