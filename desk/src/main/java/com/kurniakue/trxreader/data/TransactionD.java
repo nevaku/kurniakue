@@ -5,6 +5,8 @@
  */
 package com.kurniakue.trxreader.data;
 
+import static com.kurniakue.common.Common.CASH;
+import static com.kurniakue.common.Common.RKAP;
 import com.kurniakue.common.Tool;
 import com.kurniakue.trxreader.data.Transaction.F;
 import com.mongodb.AggregationOutput;
@@ -147,7 +149,7 @@ public class TransactionD extends Persistor {
             DBObject dbobject = cursor.next();
             Transaction transaction = new Transaction();
             transaction.putAll(dbobject.toMap());
-            list.add(transaction);
+            list.add(transaction); //filter by itemno and item name RKAP - saldo, fix amount to + instead of -
         }
 
         return list;
@@ -222,7 +224,11 @@ public class TransactionD extends Persistor {
             DBObject query = cursor.next();
             DBObject update = new BasicDBObject();
             update.putAll(query);
-            update.put(F.DCFlag.name(), -1);
+            int dcflag = -1;
+            if (CASH.equals(update.get(F.ItemNo.name()))) {
+                dcflag = 1;
+            }
+            update.put(F.DCFlag.name(), dcflag);
             transactions.update(query, update);
         }
     }
@@ -305,5 +311,37 @@ public class TransactionD extends Persistor {
 
     public static BasicDBObject b(String key, Object value) {
         return new BasicDBObject(key, value);
+    }
+
+    public void fixRkapField(String dateStr) {
+        DBCursor cursor;
+        if (dateStr == null || "".equals(dateStr)) {
+            cursor = transactions.find();
+        } else {
+            cursor = transactions.find(new BasicDBObject(F.Date.name(), dateStr));
+        }
+        while (cursor.hasNext()) {
+            DBObject query = cursor.next();
+            DBObject update = new BasicDBObject();
+            update.putAll(query);
+            Record record  = Record.r(update);
+            if (!RKAP.equals(record.get(F.ItemNo))) {
+                continue;
+            }
+            if (!record.getString(F.ItemName).startsWith("Saldo")) {
+                continue;
+            }
+            
+            if (record.getInt(F.Amount) < 0)  {
+                update.put(F.Amount.name(), record.getInt(F.Amount) * -1);
+            }
+            if (record.getInt(F.DCFlag) < 0)  {
+                update.put(F.DCFlag.name(), record.getInt(F.DCFlag) * -1);
+            }
+            
+            // uncomment to actually update DB
+            // and comment it back to prevent accidental update DB
+            // transactions.update(query, update);
+        }
     }
 }

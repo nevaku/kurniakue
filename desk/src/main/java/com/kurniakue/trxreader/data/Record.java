@@ -5,9 +5,9 @@
  */
 package com.kurniakue.trxreader.data;
 
-import com.kurniakue.common.Common;
 import com.kurniakue.common.EnumField;
 import com.kurniakue.common.Tool;
+import com.mongodb.DBObject;
 import java.util.HashMap;
 
 /**
@@ -65,5 +65,11 @@ public class Record extends HashMap<String, Object> {
         sb.delete(sb.length() - 2, sb.length() - 1);
         sb.append("]");
         return sb.toString();
+    }
+    
+    public static Record r(DBObject dbObject) {
+        final Record record = new Record();
+        record.putAll(dbObject.toMap());
+        return record;
     }
 }

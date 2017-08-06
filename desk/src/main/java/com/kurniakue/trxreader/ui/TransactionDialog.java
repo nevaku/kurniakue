@@ -161,6 +161,9 @@ public class TransactionDialog extends javax.swing.JDialog {
         tableMenu = new javax.swing.JPopupMenu();
         EditMenu = new javax.swing.JMenuItem();
         DeleteMenu = new javax.swing.JMenuItem();
+        AddCreditFlag = new javax.swing.JButton();
+        fixAmount = new javax.swing.JButton();
+        fixRkapField = new javax.swing.JButton();
         Top = new javax.swing.JPanel();
         transactionDatePanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -205,8 +208,6 @@ public class TransactionDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         right = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
-        jButton7 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
         jLabel12 = new javax.swing.JLabel();
         customerIdCounterBox = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
@@ -229,6 +230,27 @@ public class TransactionDialog extends javax.swing.JDialog {
             }
         });
         tableMenu.add(DeleteMenu);
+
+        AddCreditFlag.setText("Add Credit Flag");
+        AddCreditFlag.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddCreditFlagActionPerformed(evt);
+            }
+        });
+
+        fixAmount.setText("Fix Amount");
+        fixAmount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fixAmountActionPerformed(evt);
+            }
+        });
+
+        fixRkapField.setText("Fix RKAP Field");
+        fixRkapField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fixRkapFieldActionPerformed(evt);
+            }
+        });
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -531,22 +553,6 @@ public class TransactionDialog extends javax.swing.JDialog {
 
         jPanel7.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
-        jButton7.setText("Fix Amount");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
-            }
-        });
-        jPanel7.add(jButton7);
-
-        jButton9.setText("Add Credit Flag");
-        jButton9.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton9ActionPerformed(evt);
-            }
-        });
-        jPanel7.add(jButton9);
-
         jLabel12.setText("Last Customer Counter");
         jLabel12.setPreferredSize(new java.awt.Dimension(180, 30));
         jPanel7.add(jLabel12);
@@ -673,23 +679,27 @@ public class TransactionDialog extends javax.swing.JDialog {
         editSelectedTransaction();
     }//GEN-LAST:event_EditMenuActionPerformed
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+    private void fixAmountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixAmountActionPerformed
         TransactionD.get().fixAmount(transactionDateBox.getText());
         loadTransaction();
-    }//GEN-LAST:event_jButton7ActionPerformed
+    }//GEN-LAST:event_fixAmountActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         deleteSelectedCustomer();
     }//GEN-LAST:event_jButton8ActionPerformed
 
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        TransactionD.get().addCreditFlag("");
-        loadTransaction();
-    }//GEN-LAST:event_jButton9ActionPerformed
+    private void AddCreditFlagActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddCreditFlagActionPerformed
+        //TransactionD.get().addCreditFlag("");
+        //loadTransaction();
+    }//GEN-LAST:event_AddCreditFlagActionPerformed
 
     private void rekapButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rekapButtonActionPerformed
         recapitulateCustomerAtMonth();
     }//GEN-LAST:event_rekapButtonActionPerformed
+
+    private void fixRkapFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fixRkapFieldActionPerformed
+        fixRkapField();
+    }//GEN-LAST:event_fixRkapFieldActionPerformed
 
     public void storeLastDate() {
         String lastDate = transactionDateBox.getText();
@@ -826,6 +836,7 @@ public class TransactionDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AddCreditFlag;
     private javax.swing.JPanel Bottom;
     private javax.swing.JPanel Center;
     private javax.swing.JMenuItem DeleteMenu;
@@ -841,6 +852,8 @@ public class TransactionDialog extends javax.swing.JDialog {
     private javax.swing.JTextField customerNameBox;
     private javax.swing.JPanel customerNamePanel;
     private javax.swing.JTextField emailBox;
+    private javax.swing.JButton fixAmount;
+    private javax.swing.JButton fixRkapField;
     private javax.swing.JTextField itemNameBox;
     private javax.swing.JTextField itemNoBox;
     private javax.swing.JButton jButton1;
@@ -848,9 +861,7 @@ public class TransactionDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1159,6 +1170,11 @@ public class TransactionDialog extends javax.swing.JDialog {
 
         CustomerD.get().delete(customerNameBox.getText());
         loadCustomers();
+    }
+    
+    private void fixRkapField() {
+        TransactionD.get().fixRkapField("");
+        loadTransaction();
     }
 
     private void recapitulateCustomerAtMonth() {

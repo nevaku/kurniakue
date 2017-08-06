@@ -249,6 +249,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void showDataEntry() {
         TransactionDialog.showDialog();
+        exit();
     }
 
     private void exit() {
@@ -291,6 +292,7 @@ public class MainFrame extends javax.swing.JFrame {
         String baseDir = baseDirBox.getText();
         TrxDbReader.processBillFromDb(calendar, baseDir);
         JOptionPane.showMessageDialog(this, "Complete");
+        exit();
     }
 
     private void browseBaseDir() {

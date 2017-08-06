@@ -32,6 +32,30 @@
         </MenuItem>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="AddCreditFlag">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Add Credit Flag"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AddCreditFlagActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="fixAmount">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Fix Amount"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fixAmountActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="fixRkapField">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Fix RKAP Field"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fixRkapFieldActionPerformed"/>
+      </Events>
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
@@ -529,22 +553,6 @@
             <Property name="alignment" type="int" value="0"/>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JButton" name="jButton7">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Fix Amount"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton7ActionPerformed"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JButton" name="jButton9">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Add Credit Flag"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton9ActionPerformed"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JLabel" name="jLabel12">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Last Customer Counter"/>
