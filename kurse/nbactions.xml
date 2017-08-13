@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+        <action>
+            <actionName>CUSTOM-resolve</actionName>
+            <displayName>resolve</displayName>
+            <goals>
+                <goal>dependency:resolve</goal>
+            </goals>
+        </action>
+    </actions>
