@@ -5,13 +5,12 @@
         <param-value>Development</param-value>
     </context-param>
     <servlet>
-        <servlet-name>Faces Servlet</servlet-name>
-        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
+        <servlet-name>kursepo</servlet-name>
+        <servlet-class>kursepo</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Faces Servlet</servlet-name>
-        <url-pattern>/faces/*</url-pattern>
+        <servlet-name>kursepo</servlet-name>
+        <url-pattern>/kursepo</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
@@ -19,6 +18,6 @@
         </session-timeout>
     </session-config>
     <welcome-file-list>
-        <welcome-file>faces/ula.html</welcome-file>
+        <welcome-file>ula.html</welcome-file>
     </welcome-file-list>
 </web-app>

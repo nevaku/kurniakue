@@ -16,3 +16,4 @@ target/
 *.log
 /kurniaserver/build/
 /kurniaserver/nbproject/private/
+/kurniaserver/dist/

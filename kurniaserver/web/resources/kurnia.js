@@ -1,32 +1,30 @@
 $(function () {
-    new Vue({
-        el: '#app',
-        data: {
-            message: 'Hello Vue.js!'
-        },
+    Vue.component('kk-button', {
+        template: 
+                '<div class="col-xs-4 col-sm-3">\
+                        <button v-on:click="kkopen" class="btn-block">{{text}}</button>\
+                </div>',
+        props: ['text','href'],
         methods: {
-            reverseMessage: function () {
-                this.message = this.message.split('').reverse().join('');
+            kkopen: function () {
+                vm.openhref(this.href);
             }
         }
     });
 
-    Vue.component('todo-item', {
-        // The todo-item component now accepts a
-        // "prop", which is like a custom attribute.
-        // This prop is called todo.
-        props: ['todo'],
-        template: '<li>{{ todo.text }}</li>'
-    });
-    
-    new Vue({
-        el: '#app-todo',
-        data: {
-            groceryList: [
-                {id: 0, text: 'Vegetables'},
-                {id: 1, text: 'Cheese'},
-                {id: 2, text: 'Whatever else humans are supposed to eat'}
-            ]
+    vm =new Vue({
+        el: '#kkwadah',
+        methods: {
+            openhref: function (href) {
+                document.location.href = href;
+            },
+            openula: function () {
+                document.location.href = "ula.html";
+            },
+            calculate: function () {
+                // submitting;
+                $('#caldlg').modal('hide');
+            }
         }
     });
 });

@@ -16,9 +16,21 @@
                 "v-bind:key": {}
             }
         },
+        "button-counter": {
+            "attributes": {
+                "v-on:increment": {}
+            }
+        },
+        "kkbmenu": {},
         "b-carousel": {
             "attributes": {
                 "controls": {}
+            }
+        },
+        "kk-button": {
+            "attributes": {
+                "text": {},
+                "href": {}
             }
         }
     },
