@@ -17,3 +17,4 @@ target/
 /kurniaserver/build/
 /kurniaserver/nbproject/private/
 /kurniaserver/dist/
+kurniaserver/nbproject/genfiles.properties
