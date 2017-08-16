@@ -32,9 +32,9 @@
             <version>2.9.0.pr4</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.6</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>data</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

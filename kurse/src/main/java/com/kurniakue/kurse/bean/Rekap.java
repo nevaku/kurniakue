@@ -5,6 +5,12 @@
  */
 package com.kurniakue.kurse.bean;
 
+import com.kurniakue.kurse.Replier;
+import com.kurniakue.data.DateInfo;
+import com.kurniakue.data.Transaction;
+import com.kurniakue.kurse.KurseContext;
+import java.util.Calendar;
+
 /**
  *
  * @author Harun Al Rasyid
@@ -12,6 +18,17 @@ package com.kurniakue.kurse.bean;
 public class Rekap {
     public void calculate()
     {
-        System.out.println("rekap.calculate()");
+        Calendar calendar = getContext().getCurrentCalendar();
+        DateInfo dateInfo = DateInfo.getDateInfo(calendar);
+        getReplier().add("Rekapitulate transaction in " + dateInfo.getString(DateInfo.F.ThisYearMonth)).send();
+        new Transaction().recapitulate(dateInfo);
+    }
+
+    private KurseContext getContext() {
+        return KurseContext.getContext();
+    }
+
+    private Replier getReplier() {
+        return getContext().getReplier();
     }
 }

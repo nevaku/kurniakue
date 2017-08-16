@@ -66,7 +66,13 @@ public class kursepo extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            KurseContext.init(request, response);
+            processRequest(request, response);
+        }
+        finally{
+            KurseContext.close();
+        }
     }
 
     /**
@@ -82,8 +88,7 @@ public class kursepo extends HttpServlet {
             throws ServletException, IOException {
         System.out.println(request.getContextPath());
         try {
-            this.request.set(request);
-            this.response.set(response);
+            KurseContext.init(request, response);
 
             parseParameters();
             parseBody();
@@ -93,18 +98,21 @@ public class kursepo extends HttpServlet {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        finally {
+            KurseContext.close();
+        }
     }
 
-    private final ThreadLocal<HttpServletRequest> request = new ThreadLocal<>();
+    public static KurseContext getContext() {
+        return KurseContext.getContext();
+    }
 
     public HttpServletRequest getRequest() {
-        return request.get();
+        return getContext().getRequest();
     }
 
-    private final ThreadLocal<HttpServletResponse> response = new ThreadLocal<>();
-
     public HttpServletResponse getResponse() {
-        return response.get();
+        return getContext().getResponse();
     }
 
     /**
