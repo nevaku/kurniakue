@@ -3,15 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.kurniakue.kurse;
+package com.kurniakue.kurse.bean;
+
+import com.kurniakue.kurse.Replier;
 
 /**
  *
  * @author Harun Al Rasyid
  */
-public class JsonRequest {
-    public String reqid;
-    public String bean;
-    public String method;
-    public Object params;
+public class Status {
+    public void refresh()
+    {
+        System.out.println("Status.refresh");
+        Replier.get().send();
+    }
 }

@@ -5,6 +5,7 @@
  */
 package com.kurniakue.kurse;
 
+import java.io.PrintWriter;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -12,12 +13,22 @@ import javax.servlet.http.HttpServletResponse;
  * @author Harun Al Rasyid
  */
 public class Replier {
-    
-    private final StringBuilder reply = new StringBuilder();
-    private final HttpServletResponse response;
 
-    public Replier(HttpServletResponse response) {
-        this.response = response;
+    private static final Replier instance = new Replier();
+    private final StringBuilder reply = new StringBuilder();
+    private final ThreadLocal<HttpServletResponse> response = new ThreadLocal<>();
+    
+    public static Replier get() {
+        return instance;
+    }
+
+    public void init (HttpServletResponse response) {
+        this.response.set(response);
+    }
+    
+    public HttpServletResponse getResponse()
+    {
+        return response.get();
     }
 
     public Replier add(String text) {
@@ -26,7 +37,13 @@ public class Replier {
     }
 
     public void send() {
-        
+        getResponse().setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = getResponse().getWriter()) {
+            out.println(reply.toString());
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            reply.delete(0, reply.length());
+        }
     }
-    
 }

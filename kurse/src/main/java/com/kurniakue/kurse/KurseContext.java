@@ -25,13 +25,13 @@ public class KurseContext {
 
     public static KurseContext init(HttpServletRequest request, HttpServletResponse response) {
         context.set(new KurseContext(request, response));
+        Replier.get().init(response);
         return getContext();
     }
 
     private KurseContext(HttpServletRequest request, HttpServletResponse response) {
         this.request = request;
         this.response = response;
-        replier = new Replier(response);
     }
 
     public static KurseContext close() {
@@ -45,13 +45,12 @@ public class KurseContext {
     }
 
     public Calendar getCurrentCalendar() {
-        return (Calendar) getSession().getAttribute(Sst.Calendar + "");
-    }
-
-    private final Replier replier;
-
-    public Replier getReplier() {
-        return replier;
+        Calendar calendar = (Calendar) getSession().getAttribute(Sst.Calendar + "");
+        if (calendar == null) {
+            calendar = Calendar.getInstance();
+            getSession().setAttribute(Sst.Calendar + "", calendar);
+        }
+        return calendar;
     }
 
     private final HttpServletRequest request;

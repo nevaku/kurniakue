@@ -18,17 +18,15 @@ import java.util.Calendar;
 public class Rekap {
     public void calculate()
     {
+        System.out.println("Rekap.calculate");
         Calendar calendar = getContext().getCurrentCalendar();
         DateInfo dateInfo = DateInfo.getDateInfo(calendar);
-        getReplier().add("Rekapitulate transaction in " + dateInfo.getString(DateInfo.F.ThisYearMonth)).send();
+        Replier.get().add("Rekapitulate transaction in " + dateInfo.getString(DateInfo.F.ThisYearMonth)).send();
         new Transaction().recapitulate(dateInfo);
+        Replier.get().add("Rekapitulation complete.");
     }
 
     private KurseContext getContext() {
         return KurseContext.getContext();
-    }
-
-    private Replier getReplier() {
-        return getContext().getReplier();
     }
 }

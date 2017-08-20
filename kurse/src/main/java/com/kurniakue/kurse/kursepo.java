@@ -6,6 +6,8 @@ package com.kurniakue.kurse;
  * and open the template in the editor.
  */
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kurniakue.data.KurniaKueDb;
+import com.kurniakue.data.TheConfig;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +29,24 @@ import org.apache.commons.lang3.StringUtils;
  */
 @WebServlet(urlPatterns = {"/kursepo"})
 public class kursepo extends HttpServlet {
+    
+    private static TheConfig config;
+
+    @Override
+    public void init() throws ServletException {
+        System.out.println("Starting servlet");
+        config = KurniaKueDb.getConfig();
+        String configPath = "c:/harun/cfg/telebot.conf";
+        System.out.println("Config path: " + configPath);
+        config.load(configPath);
+    }
+
+    @Override
+    public void destroy() {
+        KurniaKueDb.stopAll();
+        super.destroy();
+        System.out.println("Destroying servlet");
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -174,11 +194,18 @@ public class kursepo extends HttpServlet {
         String beanName = getJsonRequest().bean;
         String className = StringUtils.capitalize(beanName);
         String fullClassName = "com.kurniakue.kurse.bean." + className;
-        Class clazz = Class.forName(fullClassName);
-        Object bean = clazz.newInstance();
-        Method method = clazz.getMethod(getJsonRequest().method);
-        method.invoke(bean);
-        return false;
+        Class clazz;
+        try {
+            clazz = Class.forName(fullClassName);
+            Object bean = clazz.newInstance();
+            Method method = clazz.getMethod(getJsonRequest().method);
+            method.invoke(bean);
+        } catch (Exception exc) {
+            exc.printStackTrace();
+            return false;
+        }
+        
+        return true;
     }
 
     private void loadBean(String jsonString) throws Exception {
