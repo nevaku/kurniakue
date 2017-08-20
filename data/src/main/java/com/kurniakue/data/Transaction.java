@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.bson.Document;
-import static com.kurniakue.data.KurniaKueDb.getDbCollection;
 import com.mongodb.client.result.UpdateResult;
 import static com.kurniakue.data.KurniaKueDb.getDbCollection;
 
@@ -49,6 +48,7 @@ public class Transaction extends Record<Transaction> implements Comparable<Trans
         return F.TransactionID;
     }
 
+    @SuppressWarnings("OverridableMethodCallInConstructor")
     public Transaction(Map<String, Object> dbobject) {
         putAll(dbobject);
     }
