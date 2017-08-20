@@ -42,9 +42,8 @@ public class InfoHandler extends UpdateHandler
 
     private void showMoreInfo()
     {
-        activeCommands = rekapMenu;
-        getReplier().addLine("Silakan").keyboard(cmdOf(rekapMenu)).send();
-        return true;
+        activeCommands = infoMenu;
+        getReplier().addLine("Silakan").keyboard(cmdOf(infoMenu)).send();
         Replier replier = getReplier();
         replier.add("Mau lihat info apa? \n");
         String[] infoList = {"/saldo", "/jadwal"};
