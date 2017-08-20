@@ -1,27 +1,3 @@
-var jreqlist = [];
-
-var req = new XMLHttpRequest();
-req.sendRq = function (bean, method, reqid) {
-    this.open("POST", "kursepo", true);
-    this.setRequestHeader("Content-type", "application/json");
-    this.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-            console.log(this.responseText);
-        }
-    };
-
-    jreq = {};
-    jreq.bean = bean;
-    jreq.method = method;
-    jreq.reqid = reqid;
-    data = JSON.stringify(jreq);
-    this.send(data);
-};
-
-req.queue = function (jreq) {
-    jreqlist.push(jreq);
-};
-
 var statusRefresh = {
     reqid: 0,
     bean: "Status",

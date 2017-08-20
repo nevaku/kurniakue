@@ -8,7 +8,7 @@ package com.kurniakue.kurse.bean;
 import com.kurniakue.kurse.Replier;
 import com.kurniakue.data.DateInfo;
 import com.kurniakue.data.Transaction;
-import com.kurniakue.kurse.KurseContext;
+import com.kurniakue.kurse.ReqContext;
 import java.util.Calendar;
 
 /**
@@ -21,12 +21,13 @@ public class Rekap {
         System.out.println("Rekap.calculate");
         Calendar calendar = getContext().getCurrentCalendar();
         DateInfo dateInfo = DateInfo.getDateInfo(calendar);
-        Replier.get().add("Rekapitulate transaction in " + dateInfo.getString(DateInfo.F.ThisYearMonth)).send();
+        Replier.get().add("Recapitulate transaction in " + dateInfo.getString(DateInfo.F.ThisYearMonth))
+                .add("\n");
         new Transaction().recapitulate(dateInfo);
-        Replier.get().add("Rekapitulation complete.");
+        Replier.get().add("Recapitulation complete.").send();
     }
 
-    private KurseContext getContext() {
-        return KurseContext.getContext();
+    private ReqContext getContext() {
+        return ReqContext.get();
     }
 }

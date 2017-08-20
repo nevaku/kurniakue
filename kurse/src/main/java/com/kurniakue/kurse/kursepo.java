@@ -5,17 +5,11 @@ package com.kurniakue.kurse;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kurniakue.data.KurniaKueDb;
 import com.kurniakue.data.TheConfig;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -74,7 +68,6 @@ public class kursepo extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -87,11 +80,13 @@ public class kursepo extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try{
-            KurseContext.init(request, response);
+            ReqContext.init(request, response);
             processRequest(request, response);
+        } catch (Exception exc) {
+            throw new RuntimeException(exc);
         }
         finally{
-            KurseContext.close();
+            ReqContext.close();
         }
     }
 
@@ -108,23 +103,20 @@ public class kursepo extends HttpServlet {
             throws ServletException, IOException {
         System.out.println(request.getContextPath());
         try {
-            KurseContext.init(request, response);
-
-            parseParameters();
-            parseBody();
-            if (!process()) {
+            ReqContext.init(request, response);
+            if (!ReqContext.get().process()) {
                 processRequest(getRequest(), getResponse());
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         finally {
-            KurseContext.close();
+            ReqContext.close();
         }
     }
 
-    public static KurseContext getContext() {
-        return KurseContext.getContext();
+    public static ReqContext getContext() {
+        return ReqContext.get();
     }
 
     public HttpServletRequest getRequest() {
@@ -143,73 +135,5 @@ public class kursepo extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
-    }// </editor-fold>
-
-    private final ThreadLocal<Map<String, String>> reqParams = new ThreadLocal<Map<String, String>>() {
-        {
-            set(new HashMap<String, String>());
-        }
-    };
-
-    public Map<String, String> getReqParams() {
-        return reqParams.get();
-    }
-
-    private void parseParameters() {
-        for (Enumeration<String> iterator = getRequest().getParameterNames(); iterator.hasMoreElements();) {
-            String paramName = iterator.nextElement();
-            getReqParams().put(paramName, getRequest().getParameter(paramName));
-            System.out.println(paramName + ": " + getRequest().getParameter(paramName));
-        }
-    }
-    
-    private final ThreadLocal<JsonRequest> jsonRequest = new ThreadLocal<>();
-
-    public JsonRequest getJsonRequest() {
-        return jsonRequest.get();
-    }
-
-    private void parseBody() throws Exception {
-        String data;
-        try (InputStream is = getRequest().getInputStream();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
-            int read;
-            while (true) {
-                read = is.read(buffer);
-                if (read > 0) {
-                    baos.write(buffer, 0, read);
-                }
-                if (read < buffer.length) {
-                    break;
-                }
-            }
-            data = baos.toString();
-            System.out.println(data);
-            loadBean(data);
-        }
-    }
-
-    private boolean process() throws Exception {
-        String beanName = getJsonRequest().bean;
-        String className = StringUtils.capitalize(beanName);
-        String fullClassName = "com.kurniakue.kurse.bean." + className;
-        Class clazz;
-        try {
-            clazz = Class.forName(fullClassName);
-            Object bean = clazz.newInstance();
-            Method method = clazz.getMethod(getJsonRequest().method);
-            method.invoke(bean);
-        } catch (Exception exc) {
-            exc.printStackTrace();
-            return false;
-        }
-        
-        return true;
-    }
-
-    private void loadBean(String jsonString) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        jsonRequest.set(mapper.readValue(jsonString, JsonRequest.class));
     }
 }
