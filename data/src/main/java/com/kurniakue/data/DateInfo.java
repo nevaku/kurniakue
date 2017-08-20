@@ -26,7 +26,8 @@ public class DateInfo extends Record {
 
     public static DateInfo getDateInfo(Calendar calendar) {
         DateInfo dateInfo = new DateInfo();
-        dateInfo.put(DateInfo.F.Calendar, calendar.clone());
+        calendar = (Calendar) calendar.clone();
+        dateInfo.put(DateInfo.F.Calendar, calendar);
         dateInfo.put(DateInfo.F.Today, Tool.formatDate(calendar.getTime(), "yyyy-MM-dd"));
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         dateInfo.put(DateInfo.F.FirstDayOfThisMonth, Tool.formatDate(calendar.getTime(), "yyyy-MM-dd"));
