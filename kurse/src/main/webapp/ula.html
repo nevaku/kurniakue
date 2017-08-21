@@ -24,10 +24,11 @@ and open the template in the editor.
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
         <link rel="stylesheet" href="resources/css/kurnia.css" />
+        <script src="resources/script/conver.js"></script>
         <script src="resources/script/kurnia.js"></script>
     </head>
     <body>
-        <div id="kkwadah" class="container-fluid">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-4 col-md-3 col-lg-2 text-nowrap">
                     <h1>Kurnia Kue</h1>
@@ -43,7 +44,7 @@ and open the template in the editor.
                     <h4>Kue - Roti - Gorengan</h4>
                 </div>
             </div>
-            <div class="row">
+            <div id="kkwadah" class="row">
                 <kk-button text="Rekap" href="rkp.html"></kk-button>
                 <kk-button text="Saldo" href="ula.html"></kk-button>
                 <kk-button text="Transaksi" href="trx.html"></kk-button>
@@ -53,6 +54,23 @@ and open the template in the editor.
                 <kk-button text="Promo" href="ula.html"></kk-button>
                 <kk-button text="Pengaturan" href="ula.html"></kk-button>
                 <kk-button text="Tips" href="ula.html"></kk-button>
+            </div>
+
+            <div id="todo-list" class="row">
+                <input
+                    v-model="newTodoText"
+                    v-on:keyup.enter="addNewTodo"
+                    placeholder="Add a todo"
+                    >
+                <ul>
+                    <li
+                        is="todo-item"
+                        v-for="(todo, index) in todos"
+                        v-bind:key="todo.id"
+                        v-bind:title="todo.title"
+                        v-on:remove="todos.splice(index, 1)"
+                        ></li>
+                </ul>
             </div>
         </div>
     </body>
