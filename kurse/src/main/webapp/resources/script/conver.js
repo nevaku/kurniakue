@@ -1,41 +1,63 @@
 $(function () {
-    Vue.component('todo-item', {
+    Vue.component('msg-item', {
         template: '\
-            <li>\
+            <a href="#" v-on:click="$emit(\'activate\')">\
               {{ title }}\
-              <button v-on:click="$emit(\'remove\')">X</button>\
-            </li>\
+              <span class="badge"><button v-on:click="$emit(\'remove\')">X</button></span>\
+            </a>\
           ',
         props: ['title']
     });
 
-    new Vue({
-        el: '#todo-list',
+    msgvm = new Vue({
+        el: '#msg-list',
         data: {
-            newTodoText: '',
-            todos: [
+            newMsgText: '',
+            msgs: [
                 {
                     id: 1,
                     title: 'Do the dishes',
+                    isActive: true
                 },
                 {
                     id: 2,
                     title: 'Take out the trash',
+                    isActive: false
                 },
                 {
                     id: 3,
-                    title: 'Mow the lawn'
+                    title: 'Mow the lawn',
+                    isActive: false
                 }
             ],
-            nextTodoId: 4
+            nextMsgId: 4,
+            activeIndex: 0
         },
         methods: {
-            addNewTodo: function () {
-                this.todos.push({
-                    id: this.nextTodoId++,
-                    title: this.newTodoText
-                })
-                this.newTodoText = ''
+            addNewMsg: function () {
+                this.msgs.push({
+                    id: this.nextMsgId++,
+                    title: this.newMsgText
+                });
+                this.newMsgText = '';
+            },
+            remove(ixRemove, opt) {
+                this.msgs.splice(ixRemove, opt);
+                if (this.activeIndex === ixRemove) {
+                    this.activeIndex = -1;
+                } else if (this.activeIndex > ixRemove) {
+                    this.activeIndex -= 1;
+                }
+            },
+            activate(ixActivate) {
+                if (ixActivate === this.activeIndex) {
+                    return;
+                }
+                if (this.activeIndex >= 0 && this.activeIndex < this.msgs.length) {
+                    this.msgs[this.activeIndex].isActive = false;
+                }
+                this.msgs[ixActivate].isActive = true;
+                this.activeIndex = ixActivate;
             }
         }
     });
