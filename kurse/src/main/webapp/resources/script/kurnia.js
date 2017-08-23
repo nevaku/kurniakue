@@ -72,6 +72,12 @@ var poster = {
     }
 };
 
+var tip = {
+    request: function () {
+        msgvm.msgs.push({id: msgvm.nextMsgId++, title: "from outer " + msgvm.nextMsgId});
+    }
+};
+
 $(function () {
     //officer.check();
     
@@ -86,6 +92,14 @@ $(function () {
                 vm.openhref(this.href);
             }
         }
+    });
+    
+    Vue.component('kk-command', {
+        template:
+                '<div class="col-xs-4 col-sm-3">\
+                    <button class="btn-block" >{{text}}</button>\
+                </div>',
+        props: ['text']
     });
 
     vm = new Vue({
