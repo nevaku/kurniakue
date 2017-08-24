@@ -1,3 +1,5 @@
+var msgvm;
+
 $(function () {
     Vue.component('msg-item', {
         template: '\
@@ -13,23 +15,7 @@ $(function () {
         el: '#msg-list',
         data: {
             newMsgText: '',
-            msgs: [
-                {
-                    id: 1,
-                    title: 'Do the dishes',
-                    isActive: true
-                },
-                {
-                    id: 2,
-                    title: 'Take out the trash',
-                    isActive: false
-                },
-                {
-                    id: 3,
-                    title: 'Mow the lawn',
-                    isActive: false
-                }
-            ],
+            msgs: [],
             nextMsgId: 4,
             activeIndex: 0
         },
@@ -47,6 +33,16 @@ $(function () {
                     this.activeIndex = -1;
                 } else if (this.activeIndex > ixRemove) {
                     this.activeIndex -= 1;
+                }
+            },
+            addMsg(msgText, isActive) {
+                //console.log(msgText + ", " + isActive);
+                newLength = this.msgs.push({
+                    id: this.nextMsgId++,
+                    title: msgText
+                });
+                if (isActive) {
+                    this.activate(newLength - 1);
                 }
             },
             activate(ixActivate) {

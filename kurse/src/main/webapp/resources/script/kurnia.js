@@ -54,7 +54,7 @@ var poster = {
                 console.log("request sent: " + this.reqid);
             } else if (this.readyState === 4) {
                 console.log("reply received: " + this.reqid);
-                if (this.status === 200) {
+                if (this.status === 200 && this.responseText.trim() !== "NA") {
                     this.poster.receive(this);
                 }
                 
@@ -69,6 +69,7 @@ var poster = {
     receive: function (req) {
         console.log("Processing reply: " + req.reqid);
         console.log(req.responseText);
+        msgvm.addMsg(req.responseText);
     }
 };
 

@@ -17,4 +17,10 @@ public class Status {
         System.out.println("Status.refresh");
         Replier.get().send();
     }
+    
+    public void hello()
+    {
+        System.out.println("Status.hello");
+        Replier.get().add("Hello, how are you").send();
+    }
 }
