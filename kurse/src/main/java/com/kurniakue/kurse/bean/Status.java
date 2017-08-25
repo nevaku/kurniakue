@@ -5,7 +5,10 @@
  */
 package com.kurniakue.kurse.bean;
 
+import com.kurniakue.common.Tool;
+import com.kurniakue.data.DateInfo;
 import com.kurniakue.kurse.Replier;
+import java.util.Date;
 
 /**
  *
@@ -20,7 +23,11 @@ public class Status {
     
     public void hello()
     {
+        Date date = new Date();
         System.out.println("Status.hello");
-        Replier.get().add("Hello, how are you").send();
+        
+        Replier.get()
+            .add("[" + Tool.formatDate(date, "HH:mm:ss") + "] Hello, how are you")
+            .send();
     }
 }

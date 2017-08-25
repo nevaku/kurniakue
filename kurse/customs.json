@@ -48,8 +48,17 @@
         "v-on:click": {
             "context": "button"
         },
+        "v-bind:href": {
+            "context": "a"
+        },
+        ":id": {
+            "context": "div"
+        },
         "v-for": {
-            "context": "li"
+            "context": "div"
+        },
+        "v-bind:id": {
+            "context": "div"
         },
         "v-model": {
             "context": "input"

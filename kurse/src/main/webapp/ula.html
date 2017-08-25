@@ -58,11 +58,6 @@ and open the template in the editor.
             </div>
 
             <div id="msg-list" class="row">
-                <input
-                    v-model="newMsgText"
-                    v-on:keyup.enter="addNewMsg"
-                    placeholder="Add a message"
-                    >
                 <span style="display: none">{{activeIndex}}</span>
                 <div class="list-group">
                     <a class="list-group-item"

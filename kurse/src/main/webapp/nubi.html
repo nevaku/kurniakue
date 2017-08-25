@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Nubi - Place to learn, way to heaven</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+        <script src="https://unpkg.com/vue"></script>
+    </head>
+    <body>
+        <div class="container">
+            <div id="app" class="panel-group">
+                {{ message }}
+                <div v-for="conver in convers" class="panel panel-default">
+                    <div class="panel-heading panel-title">
+                        <a data-toggle="collapse" v-bind:href="'#coll' + conver.id">{{conver.id}}</a>
+                    </div>
+                    <div v-bind:id="'coll' + conver.id" class="panel-collapse collapse">
+                        <div v-for="msg in conver.msgs" class="panel-body">
+                            {{msg.id}}: {{msg.text}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+
+var app = new Vue({
+    el: '#app',
+    data: {
+        message: 'Hello Vue!',
+        convers: [{
+                id: 1,
+                msgs: [{
+                        id: 1,
+                        text: "Hello, how are you?"
+                    }, {
+                        id: 2,
+                        text: "fine, thank you. How are you too?"
+                    }, {
+                        id: 3,
+                        text: "Never been better"
+                    }]}, {
+                id: 2,
+                msgs: [{
+                        id: 1,
+                        text: "Do you have a plan to night?"
+                    }, {
+                        id: 2,
+                        text: "No, not yet. Do you want to go to movie?"
+                    }, {
+                        id: 3,
+                        text: "Sound's great! let's go for the ticket."
+                    }, {
+                        id: 4,
+                        text: "Can't wait fot it"
+                    }]
+            }]
+    }
+});
+        </script>
+    </body>
+
+</html>
