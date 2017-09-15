@@ -65,11 +65,13 @@ var poster = {
         };
         data = JSON.stringify(msg);
         req.send(data);
+        return req;
     },
     receive: function (req) {
         console.log("Processing reply: " + req.reqid);
         console.log(req.responseText);
         msgvm.addMsg(req.responseText);
+        return "OK";
     }
 };
 
