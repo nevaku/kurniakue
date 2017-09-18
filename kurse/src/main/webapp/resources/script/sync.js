@@ -33,14 +33,16 @@ var executor =
                 this.functionList.push(f);
                 return this.functionList.length;
             },
-            _else: function (f)
+            _else: function ()
             {
+                f = function () {};
                 f.mark = "else";
                 this.functionList.push(f);
                 return this.functionList.length;
             },
-            _endif: function (f)
+            _endif: function ()
             {
+                f = function () {};
                 f.mark = "endif";
                 this.functionList.push(f);
                 return this.functionList.length;
@@ -89,7 +91,7 @@ var executor =
 
                 currentFunction = the.functionList[the.currentIndex];
                 console.info(the.currentIndex + " - " + currentFunction.mark);
-                
+
                 if (currentFunction.mark === "wait")
                 {
                     result = currentFunction.call();
@@ -110,6 +112,12 @@ var executor =
                     {
                         the.findNextIf();
                     }
+                } else if (currentFunction.mark === "else")
+                {
+                    // found else after executing if
+                    // skip through to endif
+                    the.currentIndex += 1;
+                    the.findEndIf();
                 } else
                 {
                     currentFunction.call();
@@ -168,6 +176,18 @@ var executor =
 
                     this.currentIndex += 1;
                 }
+            },
+            findEndIf: function ()
+            {
+                currentFunction = this.functionList[this.currentIndex];
+                while (this.currentIndex < this.functionList.length)
+                {
+                    this.currentIndex += 1;
+                    if (currentFunction.mark === "endif")
+                    {
+                        return;
+                    }
+                }
             }
         };
 
@@ -184,6 +204,46 @@ function _wait(f)
 function _stop(f)
 {
     executor._stop(f);
+}
+
+function _if(c)
+{
+    executor._if(c);
+    var if_condition = {};
+    if_condition._then = _then;
+    return if_condition;
+}
+
+function _then(f)
+{
+    executor._do()(f);
+    var if_do = {};
+    if_do._elseif = _elseif;
+    if_do._else = _else;
+    if_do._end = _end;
+    return if_do;
+}
+
+function _elseif(c)
+{
+    executor._elseif(c);
+    var elseif = {};
+    elseif._then = _then;
+    return elseif;
+}
+
+function _else()
+{
+    executor._else();
+    var _else = {};
+    _else._then = _then;
+    return _else;
+}
+
+function _end()
+{
+    executor._end();
+    return "end";
 }
 
 var counter = 1;
@@ -297,5 +357,43 @@ function wait_for_ajax_stop_continue()
     });
 
     return executor.start();
+}
+
+// If a block result true, then it run next block, if else run
+// next "if" block or skip the block
+function conditional_execution_if_only()
+{
+    // clear previous execution stacks
+    executor.clear();
+
+    // start registering execution blocks
+    _do(() => {
+        console.info("First");
+        console.info("Another First");
+    });
+
+    _if(() => {
+        console.info("counter: " + counter);
+        return counter++ === 1;
+    })._then(() => {
+        console.info("Execute this line");
+    })._then(() => {
+        console.info("and this line too");
+    }).end();
+    
+    _if(() => {
+        console.info("counter: " + counter);
+        return counter++ === 1;
+    })._then(() => {
+        console.info("Never executed");
+    })._then(() => {
+        console.info("and this line too");
+    }).end();
+    
+    _do(() => {
+        console.info("Done");
+    });
+    return executor.start();
+
 }
 
