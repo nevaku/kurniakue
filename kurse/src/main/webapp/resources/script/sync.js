@@ -55,7 +55,7 @@ var executor =
             },
             start: function ()
             {
-                console.info("Starting");
+                console.info("[Executor] " + "Starting");
                 this.running = true;
                 this.currentIndex = 0;
                 this.waiter = setTimeout(this.run, 0);
@@ -63,7 +63,7 @@ var executor =
             },
             continue: function ()
             {
-                console.info("Continue at " + this.currentIndex);
+                console.info("[Executor] " + "Continue at " + this.currentIndex);
                 this.running = true;
                 this.waiter = setTimeout(this.run, 0);
                 return this.currentIndex;
@@ -73,29 +73,29 @@ var executor =
                 the = executor;
                 if (!the.running)
                 {
-                    console.info("Stop signal received, return immediately");
+                    console.info("[Executor] " + "Stop signal received, return immediately");
                     return;
                 }
 
                 if (the.currentIndex < 0)
                 {
-                    console.info("Invalid index: " + the.currentIndex);
+                    console.info("[Executor] " + "Invalid index: " + the.currentIndex);
                     return;
                 }
                 if (the.currentIndex >= the.functionList.length)
                 {
-                    console.info("Invalid index: " + the.currentIndex);
-                    console.info("Max: " + the.functionList.length - 1);
+                    console.info("[Executor] " + "Invalid index: " + the.currentIndex);
+                    console.info("[Executor] " + "Max: " + the.functionList.length - 1);
                     return;
                 }
 
                 currentFunction = the.functionList[the.currentIndex];
-                console.info(the.currentIndex + " - " + currentFunction.mark);
+                console.info("[Executor] " + the.currentIndex + " - " + currentFunction.mark);
 
                 if (currentFunction.mark === "wait")
                 {
                     result = currentFunction.call();
-                    console.info(the.waitCounter + " - Wait result: " + result);
+                    console.info("[Executor] " + the.waitCounter + " - Wait result: " + result);
                     if (result)
                     {
                         the.waitCounter = 0;
@@ -110,6 +110,7 @@ var executor =
                         the.currentIndex += 1;
                     } else
                     {
+                        the.currentIndex += 1;
                         the.findNextIf();
                     }
                 } else if (currentFunction.mark === "else")
@@ -125,7 +126,7 @@ var executor =
                     if (currentFunction.mark === "stop")
                     {
                         the.running = false;
-                        console.info("Call continue() to run next execution");
+                        console.info("[Executor] " + "Call continue() to run next execution");
                         return;
                     }
                 }
@@ -139,10 +140,11 @@ var executor =
             },
             findNextIf: function ()
             {
-                currentFunction = this.functionList[this.currentIndex];
                 stackCount = 0;
                 while (this.currentIndex < this.functionList.length)
                 {
+                    currentFunction = this.functionList[this.currentIndex];
+                    console.info("[Executor] " + this.currentIndex + " - " + currentFunction.mark);
                     if (currentFunction.mark === "elseif")
                     {
                         if (stackCount === 0)
@@ -179,9 +181,11 @@ var executor =
             },
             findEndIf: function ()
             {
-                currentFunction = this.functionList[this.currentIndex];
+                
                 while (this.currentIndex < this.functionList.length)
                 {
+                    currentFunction = this.functionList[this.currentIndex];
+                    console.info("[Executor] " + this.currentIndex + " - " + currentFunction.mark);
                     this.currentIndex += 1;
                     if (currentFunction.mark === "endif")
                     {
@@ -216,11 +220,12 @@ function _if(c)
 
 function _then(f)
 {
-    executor._do()(f);
+    executor._do(f);
     var if_do = {};
+    if_do._then = _then;
     if_do._elseif = _elseif;
     if_do._else = _else;
-    if_do._end = _end;
+    if_do._endif = _endif;
     return if_do;
 }
 
@@ -232,18 +237,19 @@ function _elseif(c)
     return elseif;
 }
 
-function _else()
+function _else(f)
 {
     executor._else();
+    executor._do(f);
     var _else = {};
     _else._then = _then;
     return _else;
 }
 
-function _end()
+function _endif()
 {
-    executor._end();
-    return "end";
+    executor._endif();
+    return "endif";
 }
 
 var counter = 1;
@@ -379,7 +385,7 @@ function conditional_execution_if_only()
         console.info("Execute this line");
     })._then(() => {
         console.info("and this line too");
-    }).end();
+    })._endif();
     
     _if(() => {
         console.info("counter: " + counter);
@@ -388,7 +394,7 @@ function conditional_execution_if_only()
         console.info("Never executed");
     })._then(() => {
         console.info("and this line too");
-    }).end();
+    })._endif();
     
     _do(() => {
         console.info("Done");
