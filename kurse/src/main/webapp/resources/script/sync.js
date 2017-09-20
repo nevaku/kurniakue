@@ -5,6 +5,10 @@ var executor =
             currentIndex: 0,
             functionList: [],
             waitCounter: 0,
+            consoleInfo: function(text)
+            {
+                console.info("[Executor] " + text);
+            },
             clear: function ()
             {
                 this.functionList = [];
@@ -55,7 +59,7 @@ var executor =
             },
             start: function ()
             {
-                console.info("[Executor] " + "Starting");
+                this.consoleInfo("Starting");
                 this.running = true;
                 this.currentIndex = 0;
                 this.waiter = setTimeout(this.run, 0);
@@ -63,7 +67,7 @@ var executor =
             },
             continue: function ()
             {
-                console.info("[Executor] " + "Continue at " + this.currentIndex);
+                this.consoleInfo("Continue at " + this.currentIndex);
                 this.running = true;
                 this.waiter = setTimeout(this.run, 0);
                 return this.currentIndex;
@@ -73,29 +77,29 @@ var executor =
                 the = executor;
                 if (!the.running)
                 {
-                    console.info("[Executor] " + "Stop signal received, return immediately");
+                    the.consoleInfo("Stop signal received, return immediately");
                     return;
                 }
 
                 if (the.currentIndex < 0)
                 {
-                    console.info("[Executor] " + "Invalid index: " + the.currentIndex);
+                    the.consoleInfo("Invalid index: " + the.currentIndex);
                     return;
                 }
                 if (the.currentIndex >= the.functionList.length)
                 {
-                    console.info("[Executor] " + "Invalid index: " + the.currentIndex);
-                    console.info("[Executor] " + "Max: " + the.functionList.length - 1);
+                    the.consoleInfo("Invalid index: " + the.currentIndex);
+                    the.consoleInfo("Max: " + the.functionList.length - 1);
                     return;
                 }
 
                 currentFunction = the.functionList[the.currentIndex];
-                console.info("[Executor] " + the.currentIndex + " - " + currentFunction.mark);
+                the.consoleInfo(the.currentIndex + " - " + currentFunction.mark);
 
                 if (currentFunction.mark === "wait")
                 {
                     result = currentFunction.call();
-                    console.info("[Executor] " + the.waitCounter + " - Wait result: " + result);
+                    the.consoleInfo(the.waitCounter + " - Wait result: " + result);
                     if (result)
                     {
                         the.waitCounter = 0;
@@ -126,7 +130,7 @@ var executor =
                     if (currentFunction.mark === "stop")
                     {
                         the.running = false;
-                        console.info("[Executor] " + "Call continue() to run next execution");
+                        the.consoleInfo("Call continue() to run next execution");
                         return;
                     }
                 }
@@ -144,7 +148,7 @@ var executor =
                 while (this.currentIndex < this.functionList.length)
                 {
                     currentFunction = this.functionList[this.currentIndex];
-                    console.info("[Executor] " + this.currentIndex + " - " + currentFunction.mark);
+                    this.consoleInfo(this.currentIndex + " - " + currentFunction.mark);
                     if (currentFunction.mark === "elseif")
                     {
                         if (stackCount === 0)
@@ -185,7 +189,7 @@ var executor =
                 while (this.currentIndex < this.functionList.length)
                 {
                     currentFunction = this.functionList[this.currentIndex];
-                    console.info("[Executor] " + this.currentIndex + " - " + currentFunction.mark);
+                    this.consoleInfo(this.currentIndex + " - " + currentFunction.mark);
                     this.currentIndex += 1;
                     if (currentFunction.mark === "endif")
                     {
@@ -194,6 +198,11 @@ var executor =
                 }
             }
         };
+
+function mainInfo(text)
+{
+    console.info("[MAIN] " + text);
+}
 
 function _do(f)
 {
@@ -234,6 +243,9 @@ function _elseif(c)
     executor._elseif(c);
     var elseif = {};
     elseif._then = _then;
+    elseif._elseif = _elseif;
+    elseif._else = _else;
+    elseif._endif = _endif;
     return elseif;
 }
 
@@ -243,6 +255,7 @@ function _else(f)
     executor._do(f);
     var _else = {};
     _else._then = _then;
+    _else._endif = _endif;
     return _else;
 }
 
@@ -263,31 +276,32 @@ function wait_for_condition()
 {
     // clear previous execution stacks
     executor.clear();
+    counter = 1;
 
     // start registering execution blocks
     _do(() => {
-        console.info("First");
-        console.info("Another First");
+        mainInfo("First");
+        mainInfo("Another First");
     });
     _do(() => {
-        console.info("Second");
-        console.info("Another Second");
+        mainInfo("Second");
+        mainInfo("Another Second");
     });
     _wait(() => {
-        console.info("Wait for 5 counter: " + counter);
+        mainInfo("Wait for 5 counter: " + counter);
         return (++counter > 5);
     });
     _do(() => {
-        console.info("Third");
+        mainInfo("Third");
         counter = 1;
-        console.info("Reset the counter to " + counter);
+        mainInfo("Reset the counter to " + counter);
     });
     _wait(() => {
-        console.info("Wait for 15 counter: " + counter);
+        mainInfo("Wait for 15 counter: " + counter);
         return (++counter > 15);
     });
     _do(() => {
-        console.info("Done");
+        mainInfo("Done");
     });
     return executor.start();
 }
@@ -307,7 +321,7 @@ function wait_for_ajax_pooling()
 
     // call ajax
     _do(() => {
-        console.info("get data from ajaxSample.html");
+        mainInfo("get data from ajaxSample.html");
         xhttp = new XMLHttpRequest();
         xhttp.open("GET", "ajaxSample.html");
         xhttp.send();
@@ -315,13 +329,13 @@ function wait_for_ajax_pooling()
 
     // wait for ajax response ready
     _wait(() => {
-        console.info("Wait for ajax status ready: " + xhttp.readyState);
+        mainInfo("Wait for ajax status ready: " + xhttp.readyState);
         return (xhttp.readyState === 4);
     });
 
     _do(() => {
-        console.info("Ajax Status: " + xhttp.status);
-        console.info("Ajax Response: " + xhttp.responseText);
+        mainInfo("Ajax Status: " + xhttp.status);
+        mainInfo("Ajax Response: " + xhttp.responseText);
     });
 
     return executor.start();
@@ -346,7 +360,7 @@ function wait_for_ajax_stop_continue()
     // notified by onreadystatechange, then continue
     // no need to wait
     _stop(() => {
-        console.info("get status from server");
+        mainInfo("get status from server");
         xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState === 4) {
@@ -358,15 +372,15 @@ function wait_for_ajax_stop_continue()
     });
 
     _do(() => {
-        console.info("Ajax Status: " + xhttp.status);
-        console.info("Ajax Response: " + xhttp.responseText);
+        mainInfo("Ajax Status: " + xhttp.status);
+        mainInfo("Ajax Response: " + xhttp.responseText);
     });
 
     return executor.start();
 }
 
-// If a block result true, then it run next block, if else run
-// next "if" block or skip the block
+// If a block result true, then it run next block,
+//  if not then run next "if" block or skip the block
 function conditional_execution_if_only()
 {
     // clear previous execution stacks
@@ -374,32 +388,122 @@ function conditional_execution_if_only()
 
     // start registering execution blocks
     _do(() => {
-        console.info("First");
-        console.info("Another First");
+        mainInfo("==== First Case if-only ====");
+        counter = 1;
     });
 
     _if(() => {
-        console.info("counter: " + counter);
+        mainInfo("counter: " + counter);
         return counter++ === 1;
     })._then(() => {
-        console.info("Execute this line");
+        mainInfo("Execute this line");
     })._then(() => {
-        console.info("and this line too");
-    })._endif();
-    
-    _if(() => {
-        console.info("counter: " + counter);
-        return counter++ === 1;
-    })._then(() => {
-        console.info("Never executed");
-    })._then(() => {
-        console.info("and this line too");
+        mainInfo("and this line too");
     })._endif();
     
     _do(() => {
-        console.info("Done");
+        mainInfo("==== Second Case if-only ====");
+    });
+    
+    _if(() => {
+        mainInfo("counter: " + counter);
+        return counter++ === 1;
+    })._then(() => {
+        mainInfo("Never executed");
+    })._then(() => {
+        mainInfo("and this line too");
+    })._endif();
+    
+    _do(() => {
+        mainInfo("Done");
     });
     return executor.start();
+}
 
+// If a block result true, then it run next block,
+//  if not then run next "else" block 
+function conditional_execution_if_else()
+{
+    // clear previous execution stacks
+    executor.clear();
+
+    // start registering execution blocks
+    _do(() => {
+        mainInfo("==== Case if-else ====");
+        counter = 2;
+    });
+    
+    _if(() => {
+        mainInfo("counter: " + counter);
+        return counter++ === 1;
+    })._then(() => {
+        mainInfo("Never executed");
+    })._else(() => {
+        mainInfo("execute this else line");
+    })._then(() => {
+        mainInfo("and this else line too");
+    })._endif();
+    
+    _do(() => {
+        mainInfo("Done");
+    });
+    return executor.start();
+}
+
+// If a block result true, then it run next block,
+//  if not then check next "elseif" block 
+//  if not then check next "elseif" block and run if true.
+//  if not then run next "else" block 
+function conditional_execution_if_elseif_else()
+{
+    // clear previous execution stacks
+    executor.clear();
+
+    // start registering execution blocks
+    _do(() => {
+        mainInfo("==== First Case if-elseif-else ====");
+        counter = 2;
+    });
+
+    _if(() => {
+        mainInfo("counter: " + counter);
+        return counter++ === 1;
+    })._then(() => {
+        mainInfo("Never executed");
+    })._elseif(() => {
+        mainInfo("counter: " + counter);
+        return counter++ === 3;
+    })._then(() => {
+        mainInfo("execute this elseif line");
+    })._then(() => {
+        mainInfo("and this elseif line too");
+    })._else(() => {
+        mainInfo("Never executed");
+    })._endif();
+    
+    _do(() => {
+        mainInfo("==== Second Case if-elseif-else ====");
+    });
+    
+    _if(() => {
+        mainInfo("counter: " + counter);
+        return counter++ === 1;
+    })._then(() => {
+        mainInfo("Never executed");
+    })._elseif(() => {
+        mainInfo("counter: " + counter);
+        return counter++ === 3;
+    })._then(() => {
+        mainInfo("Never executed too");
+    })._else(() => {
+        mainInfo("execute this else line");
+    })._then(() => {
+        mainInfo("and this else line too");
+    })._endif();
+    
+    _do(() => {
+        mainInfo("Done");
+    });
+    return executor.start();
 }
 
