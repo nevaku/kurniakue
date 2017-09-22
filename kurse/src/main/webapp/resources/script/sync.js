@@ -5,9 +5,18 @@ var executor =
             currentIndex: 0,
             functionList: [],
             waitCounter: 0,
-            consoleInfo: function(text)
+            silentMode: 0,
+            consoleInfo: function (text)
             {
+                if (this.silentMode)
+                {
+                    return;
+                }
                 console.info("[Executor] " + text);
+            },
+            silent()
+            {
+                this.silentMode = 1;
             },
             clear: function ()
             {
@@ -48,6 +57,19 @@ var executor =
             {
                 f = function () {};
                 f.mark = "endif";
+                this.functionList.push(f);
+                return this.functionList.length;
+            },
+            _while: function (f)
+            {
+                f.mark = "while";
+                this.functionList.push(f);
+                return this.functionList.length;
+            },
+            _endwhile: function ()
+            {
+                f = function () {};
+                f.mark = "endwhile";
                 this.functionList.push(f);
                 return this.functionList.length;
             },
@@ -115,14 +137,38 @@ var executor =
                     } else
                     {
                         the.currentIndex += 1;
-                        the.findNextIf();
+                        the.gotoNextIf();
                     }
                 } else if (currentFunction.mark === "else")
                 {
                     // found else after executing if
                     // skip through to endif
                     the.currentIndex += 1;
-                    the.findEndIf();
+                    the.gotoEndIf();
+                } else if (currentFunction.mark === "while")
+                {
+                    result = currentFunction.call();
+                    if (result)
+                    {
+                        the.markEndWhile();
+                        the.currentIndex += 1;
+                    } else
+                    {
+                        the.currentIndex += 1;
+                        the.gotoEndWhile();
+                    }
+                } else if (currentFunction.mark === "endwhile")
+                {
+                    startWhileFunction = the.functionList[currentFunction.startWhileIndex];
+                    the.consoleInfo(currentFunction.startWhileIndex + " - " + startWhileFunction.mark);
+                    result = startWhileFunction.call();
+                    if (result)
+                    {
+                        the.currentIndex = currentFunction.startWhileIndex + 1;
+                    } else
+                    {
+                        the.currentIndex += 1;
+                    }
                 } else
                 {
                     currentFunction.call();
@@ -142,7 +188,7 @@ var executor =
                 // Progresif wait, first 100ms, then 200ms, 300ms, ...
                 this.waiter = setTimeout(the.run, 100 * (the.waitCounter));
             },
-            findNextIf: function ()
+            gotoNextIf: function ()
             {
                 stackCount = 0;
                 while (this.currentIndex < this.functionList.length)
@@ -183,18 +229,91 @@ var executor =
                     this.currentIndex += 1;
                 }
             },
-            findEndIf: function ()
+            gotoEndIf: function ()
             {
-                
+                stackCount = 0;
                 while (this.currentIndex < this.functionList.length)
                 {
                     currentFunction = this.functionList[this.currentIndex];
                     this.consoleInfo(this.currentIndex + " - " + currentFunction.mark);
-                    this.currentIndex += 1;
-                    if (currentFunction.mark === "endif")
+
+                    if (currentFunction.mark === "if")
                     {
-                        return;
+                        stackCount += 1;
+                    } else if (currentFunction.mark === "endif")
+                    {
+                        if (stackCount === 0)
+                        {
+                            this.currentIndex += 1;
+                            return;
+                        } else
+                        {
+                            if (stackCount > 0)
+                            {
+                                stackCount -= 1;
+                            }
+                        }
                     }
+                    this.currentIndex += 1;
+                }
+            },
+            markEndWhile: function ()
+            {
+                var startWhileIndex = this.currentIndex;
+                var index = this.currentIndex + 1;
+                stackCount = 0;
+                while (index < this.functionList.length)
+                {
+                    currentFunction = this.functionList[index];
+                    this.consoleInfo(index + " - " + currentFunction.mark);
+
+                    if (currentFunction.mark === "while")
+                    {
+                        stackCount += 1;
+                    } else if (currentFunction.mark === "endwhile")
+                    {
+                        if (stackCount === 0)
+                        {
+                            currentFunction.startWhileIndex = startWhileIndex;
+                            return;
+                        } else
+                        {
+                            if (stackCount > 0)
+                            {
+                                stackCount -= 1;
+                            }
+                        }
+                    }
+
+                    index += 1;
+                }
+            },
+            gotoEndWhile: function ()
+            {
+                stackCount = 0;
+                while (this.currentIndex < this.functionList.length)
+                {
+                    currentFunction = this.functionList[this.currentIndex];
+                    this.consoleInfo(this.currentIndex + " - " + currentFunction.mark);
+
+                    if (currentFunction.mark === "while")
+                    {
+                        stackCount += 1;
+                    } else if (currentFunction.mark === "endwhile")
+                    {
+                        if (stackCount === 0)
+                        {
+                            this.currentIndex += 1;
+                            return;
+                        } else
+                        {
+                            if (stackCount > 0)
+                            {
+                                stackCount -= 1;
+                            }
+                        }
+                    }
+                    this.currentIndex += 1;
                 }
             }
         };
@@ -253,16 +372,40 @@ function _else(f)
 {
     executor._else();
     executor._do(f);
-    var _else = {};
-    _else._then = _then;
-    _else._endif = _endif;
-    return _else;
+    var else_do = {};
+    else_do._then = _then;
+    else_do._endif = _endif;
+    return else_do;
 }
 
 function _endif()
 {
     executor._endif();
     return "endif";
+}
+
+function _while(f)
+{
+    executor._while(f);
+    var while_condition = {};
+    while_condition._endwhile = _endwhile;
+    while_condition._whiledo = _whiledo;
+    return while_condition;
+}
+
+function _whiledo(f)
+{
+    executor._do(f);
+    var while_do = {};
+    while_do._endwhile = _endwhile;
+    while_do._whiledo = _whiledo;
+    return while_do;
+}
+
+function _endwhile()
+{
+    executor._endwhile();
+    return "endwhile";
 }
 
 var counter = 1;
@@ -400,11 +543,11 @@ function conditional_execution_if_only()
     })._then(() => {
         mainInfo("and this line too");
     })._endif();
-    
+
     _do(() => {
         mainInfo("==== Second Case if-only ====");
     });
-    
+
     _if(() => {
         mainInfo("counter: " + counter);
         return counter++ === 1;
@@ -413,7 +556,7 @@ function conditional_execution_if_only()
     })._then(() => {
         mainInfo("and this line too");
     })._endif();
-    
+
     _do(() => {
         mainInfo("Done");
     });
@@ -432,7 +575,7 @@ function conditional_execution_if_else()
         mainInfo("==== Case if-else ====");
         counter = 2;
     });
-    
+
     _if(() => {
         mainInfo("counter: " + counter);
         return counter++ === 1;
@@ -443,7 +586,7 @@ function conditional_execution_if_else()
     })._then(() => {
         mainInfo("and this else line too");
     })._endif();
-    
+
     _do(() => {
         mainInfo("Done");
     });
@@ -480,11 +623,11 @@ function conditional_execution_if_elseif_else()
     })._else(() => {
         mainInfo("Never executed");
     })._endif();
-    
+
     _do(() => {
         mainInfo("==== Second Case if-elseif-else ====");
     });
-    
+
     _if(() => {
         mainInfo("counter: " + counter);
         return counter++ === 1;
@@ -500,10 +643,42 @@ function conditional_execution_if_elseif_else()
     })._then(() => {
         mainInfo("and this else line too");
     })._endif();
-    
+
     _do(() => {
         mainInfo("Done");
     });
     return executor.start();
 }
 
+// while a block condition return true,
+// repeat execution of group of blocks,
+// which are marked by while-endwhile
+function loop_execution_while()
+{
+    // clear previous execution stacks
+    executor.clear();
+    executor.silent();
+    
+    var nameList = ["Budi", "Agung", "Andi", "Harun", "Dina"];
+
+    // start registering execution blocks
+    _do(() => {
+        mainInfo("==== loop while true ====");
+        counter = 0;
+    });
+
+    _while(() => {
+        mainInfo("counter: " + counter);
+        return counter < nameList.length;
+    })._whiledo(() => {
+        mainInfo("Name-" + counter + ": " + nameList[counter]);
+    })._whiledo(() => {
+        mainInfo("Increment counter");
+        counter += 1;
+    })._endwhile();
+
+    _do(() => {
+        mainInfo("Done");
+    });
+    return executor.start();
+}
