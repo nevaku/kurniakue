@@ -18,7 +18,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <scm>
-        <connection>scm:git:https://github.com/nevaku/kurniakue.git</connection>
+        <connection>scm:git:git://github.com/nevaku/kurniakue.git</connection>
     </scm>
     <name>.kurniakue</name>
 </project>
