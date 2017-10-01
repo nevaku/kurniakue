@@ -3,19 +3,22 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kurniakue</groupId>
     <artifactId>kurniakue</artifactId>
-    <version>1.02.00-SNAPSHOT</version>
+    <version>1.02.00</version>
     <packaging>pom</packaging>
     <modules>
         <module>desk</module>
         <module>telebot</module>
         <module>data</module>
         <module>common</module>
-    <module>kurse</module>
-  </modules>
+        <module>kurse</module>
+    </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+    <scm>
+        <connection>scm:git:git://github.com/nevaku/kurniakue.git</connection>
+    </scm>
     <name>.kurniakue</name>
 </project>

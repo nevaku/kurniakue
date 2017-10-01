@@ -4,12 +4,12 @@
     <parent>
         <artifactId>kurniakue</artifactId>
         <groupId>com.kurniakue</groupId>
-        <version>1.02.00-SNAPSHOT</version>
+        <version>1.02.00</version>
     </parent>
 
     <groupId>com.kurniakue</groupId>
     <artifactId>kurse</artifactId>
-    <version>1.02.00-SNAPSHOT</version>
+    <version>1.02.00</version>
     <packaging>war</packaging>
 
     <name>kurse</name>

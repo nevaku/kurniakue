@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.kurniakue</groupId>
         <artifactId>kurniakue</artifactId>
-        <version>1.02.00-SNAPSHOT</version>
+        <version>1.02.00</version>
     </parent>
     <artifactId>common</artifactId>
     <packaging>jar</packaging>
