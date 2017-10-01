@@ -26,8 +26,9 @@ public class DateInfo extends Record {
 
     public static DateInfo getDateInfo(Calendar calendar) {
         DateInfo dateInfo = new DateInfo();
-        calendar = (Calendar) calendar.clone();
+        calendar = clone(calendar);
         dateInfo.put(DateInfo.F.Calendar, calendar);
+        calendar = clone(calendar);
         dateInfo.put(DateInfo.F.Today, Tool.formatDate(calendar.getTime(), "yyyy-MM-dd"));
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         dateInfo.put(DateInfo.F.FirstDayOfThisMonth, Tool.formatDate(calendar.getTime(), "yyyy-MM-dd"));
@@ -46,9 +47,15 @@ public class DateInfo extends Record {
         return dateInfo;
     }
     
+    public static Calendar clone(Calendar source) {
+        Calendar ret = Calendar.getInstance();
+        ret.setTimeInMillis(source.getTimeInMillis());
+        return ret;
+    }
+    
     public Calendar getCalendar() {
         Calendar calendar = (Calendar) this.getAs(F.Calendar);
-        return (Calendar) calendar.clone();
+        return clone(calendar);
     }
 
     public enum F implements EnumField {

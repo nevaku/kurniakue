@@ -6,7 +6,7 @@
 package com.kurniakue.kurse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import static com.kurniakue.kurse.kursepo.getContext;
+import com.kurniakue.data.DateInfo;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
@@ -54,7 +54,7 @@ public class ReqContext {
     }
 
     public void setCurrentCalendar(Calendar calendar) {
-        getSession().setAttribute(Sst.Calendar + "", calendar.clone());
+        getSession().setAttribute(Sst.Calendar + "", DateInfo.clone(calendar));
     }
 
     public Calendar getCurrentCalendar() {

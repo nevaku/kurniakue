@@ -8,6 +8,7 @@ package com.kurniakue.telebot;
 import static com.kurniakue.common.Common.*;
 import com.kurniakue.common.Tool;
 import com.kurniakue.data.Customer;
+import com.kurniakue.data.DateInfo;
 import com.kurniakue.data.Record;
 import com.kurniakue.telebot.UpdateHandler.C;
 import com.kurniakue.telebot.admin.CustomerHandler.CTX;
@@ -141,11 +142,11 @@ public class UpdateContext {
     private Calendar currentCalendar = Calendar.getInstance();
 
     public void setCurrentCalendar(Calendar calendar) {
-        this.currentCalendar = (Calendar) calendar.clone();
+        this.currentCalendar = DateInfo.clone(calendar);
     }
 
     public Calendar getCurrentCalendar() {
-        return (Calendar) currentCalendar.clone();
+        return DateInfo.clone(currentCalendar);
     }
 
     public UpdateContext setInitialInfo(TelegramBot bot, Update update) {

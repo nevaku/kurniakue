@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import org.bson.Document;
 import static com.kurniakue.data.KurniaKueDb.getDbCollection;
-import static com.kurniakue.data.KurniaKueDb.getDbCollection;
 
 /**
  *
@@ -35,6 +34,7 @@ public class Customer extends Record<Customer> implements Comparable<Customer> {
         return F.CustomerName;
     }
 
+    @SuppressWarnings("OverridableMethodCallInConstructor")
     public Customer(Map<String, Object> dbobject) {
         putAll(dbobject);
     }
@@ -107,6 +107,11 @@ public class Customer extends Record<Customer> implements Comparable<Customer> {
 
     public String getInfoSaldo() {
         List<Transaction> trxList = getTransactionList();
+        return getInfoSaldoOfTransaction(trxList);
+    }
+
+    public String getInfoSaldo(String yearMonth) {
+        List<Transaction> trxList = getTransactionListOfMonth(yearMonth);
         return getInfoSaldoOfTransaction(trxList);
     }
 

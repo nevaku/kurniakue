@@ -7,10 +7,12 @@ package com.kurniakue.telebot.admin;
 
 import com.kurniakue.common.Tool;
 import com.kurniakue.data.Customer;
+import com.kurniakue.data.DateInfo;
 import com.kurniakue.telebot.Command;
 import com.kurniakue.telebot.UpdateContext;
 import com.kurniakue.telebot.UpdateHandler;
 import com.kurniakue.telebot.admin.CustomerHandler.CTX;
+import java.util.Calendar;
 
 /**
  *
@@ -128,9 +130,13 @@ public class CustomerDetailHandler extends UpdateHandler {
         if (Tool.isBlank(state)) {
             state = "Active";
         }
-
-        String infoSaldoLastMonth = customer.getInfoSaldoLastMonth();
-        String infoSaldo = customer.getInfoSaldo();
+        
+        DateInfo dateInfo = DateInfo.getDateInfo(getContext().getCurrentCalendar());
+        String lastYearMonth = dateInfo.getString(DateInfo.F.LastYearMonth);
+        String yearMonth = dateInfo.getString(DateInfo.F.ThisYearMonth);
+        
+        String infoSaldoLastMonth = customer.getInfoSaldo(lastYearMonth);
+        String infoSaldo = customer.getInfoSaldo(yearMonth);
 
         getReplier().addLine("Name: ").add(customer.getString(Customer.F.CustomerName))
                 .addLine("CustomerID: ").add(customer.getString(Customer.F.CustomerID))
@@ -138,8 +144,8 @@ public class CustomerDetailHandler extends UpdateHandler {
                 .addLine("Email: ").add(customer.getString(Customer.F.Email))
                 .addLine("TelegramUser: ").add(customer.getString(Customer.F.TelegramUser))
                 .addLine("State: ").add(state)
-                .addLine("Bulan Lalu: ").add(infoSaldoLastMonth)
-                .addLine("Bulan Ini: ").add(infoSaldo)
+                .addLine(lastYearMonth + ": ").add(infoSaldoLastMonth)
+                .addLine(yearMonth + ": ").add(infoSaldo)
                 .keyboard(cmdOf(customerDetailMenu))
                 .send();
         return true;

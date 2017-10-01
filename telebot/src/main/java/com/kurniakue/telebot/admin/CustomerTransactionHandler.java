@@ -135,13 +135,15 @@ public class CustomerTransactionHandler extends UpdateHandler {
     }
     
     private void buildKeyboard() {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = getContext().getCurrentCalendar();
         String thisYearMonth
                 = DateInfo.getDateInfo(calendar)
                 .getString(DateInfo.F.ThisYearMonth);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
         String lastYearMonth
                 = DateInfo.getDateInfo(calendar)
                 .getString(DateInfo.F.ThisYearMonth);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
         String beforeLastYearMonth
                 = DateInfo.getDateInfo(calendar)
                 .getString(DateInfo.F.ThisYearMonth);

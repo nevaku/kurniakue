@@ -5,7 +5,6 @@
  */
 package com.kurniakue.telebot.admin;
 
-import com.kurniakue.common.Common;
 import com.kurniakue.common.EnumField;
 import com.kurniakue.common.Tool;
 import com.kurniakue.data.Customer;
@@ -15,7 +14,6 @@ import com.kurniakue.telebot.UpdateHandler;
 import com.pengrad.telegrambot.Replier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 /**
