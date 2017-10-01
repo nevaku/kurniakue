@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kurniakue</groupId>
     <artifactId>telebot</artifactId>
-    <version>1.02.00-SNAPSHOT</version>
+    <version>1.03.00-SNAPSHOT</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
