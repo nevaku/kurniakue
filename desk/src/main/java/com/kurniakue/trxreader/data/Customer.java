@@ -124,6 +124,7 @@ public class Customer extends Record implements Comparable<Customer> {
         sb.append("Dina/Harun \n");
         sb.append("HP/WA/Telegram: +62 896 5297 3311, +62 896 5297 3300 \n");
         sb.append("email: kurniakue@gmail.com;harun-1020015@infolink.co.id \n");
+        sb.append("web site: https://kurniakue.com/ \n");
         sb.append("\n");
         sb.append("Trims,\n");
         sb.append("\n");
