@@ -164,6 +164,7 @@ public class TransactionDialog extends javax.swing.JDialog {
         AddCreditFlag = new javax.swing.JButton();
         fixAmount = new javax.swing.JButton();
         fixRkapField = new javax.swing.JButton();
+        trxTypeGroup = new javax.swing.ButtonGroup();
         Top = new javax.swing.JPanel();
         transactionDatePanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -171,6 +172,9 @@ public class TransactionDialog extends javax.swing.JDialog {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
+        itemTypeProduct = new javax.swing.JRadioButton();
+        itemTypeCash = new javax.swing.JRadioButton();
+        itemTypeAll = new javax.swing.JRadioButton();
         jPanel9 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         itemNoBox = new javax.swing.JTextField();
@@ -300,6 +304,34 @@ public class TransactionDialog extends javax.swing.JDialog {
             }
         });
         transactionDatePanel.add(jButton6);
+
+        trxTypeGroup.add(itemTypeProduct);
+        itemTypeProduct.setSelected(true);
+        itemTypeProduct.setText("Product");
+        itemTypeProduct.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemTypeProductActionPerformed(evt);
+            }
+        });
+        transactionDatePanel.add(itemTypeProduct);
+
+        trxTypeGroup.add(itemTypeCash);
+        itemTypeCash.setText("Cash");
+        itemTypeCash.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemTypeProductActionPerformed(evt);
+            }
+        });
+        transactionDatePanel.add(itemTypeCash);
+
+        trxTypeGroup.add(itemTypeAll);
+        itemTypeAll.setText("All");
+        itemTypeAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemTypeProductActionPerformed(evt);
+            }
+        });
+        transactionDatePanel.add(itemTypeAll);
 
         Top.add(transactionDatePanel);
 
@@ -701,6 +733,10 @@ public class TransactionDialog extends javax.swing.JDialog {
         fixRkapField();
     }//GEN-LAST:event_fixRkapFieldActionPerformed
 
+    private void itemTypeProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemTypeProductActionPerformed
+        loadTransaction();
+    }//GEN-LAST:event_itemTypeProductActionPerformed
+
     public void storeLastDate() {
         String lastDate = transactionDateBox.getText();
         Prop.store(N.LastDate, lastDate);
@@ -856,6 +892,9 @@ public class TransactionDialog extends javax.swing.JDialog {
     private javax.swing.JButton fixRkapField;
     private javax.swing.JTextField itemNameBox;
     private javax.swing.JTextField itemNoBox;
+    private javax.swing.JRadioButton itemTypeAll;
+    private javax.swing.JRadioButton itemTypeCash;
+    private javax.swing.JRadioButton itemTypeProduct;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -893,6 +932,7 @@ public class TransactionDialog extends javax.swing.JDialog {
     private javax.swing.JTextField transactionIdBox;
     private javax.swing.JScrollPane transactionScroll;
     private javax.swing.JTable transactionTable;
+    private javax.swing.ButtonGroup trxTypeGroup;
     // End of variables declaration//GEN-END:variables
 
     public String getEmail() {
@@ -939,6 +979,10 @@ public class TransactionDialog extends javax.swing.JDialog {
         String yesterday = Tool.addDay(now, +1);
         transactionDateBox.setText(yesterday);
         storeLastDate();
+        loadTransaction();
+    }
+
+    private void toggleShowCashOption() {
         loadTransaction();
     }
 
@@ -1085,12 +1129,26 @@ public class TransactionDialog extends javax.swing.JDialog {
         String lastItemNo = null;
         for (Transaction transaction : transactionList) {
             String itemNo = transaction.tstr(Transaction.F.ItemNo);
+            if (itemTypeCash.isSelected() && !CASH.equals(itemNo)) {
+                continue;
+            } else if (itemTypeProduct.isSelected() && CASH.equals(itemNo)) {
+                continue;
+            }
+            
+            int count = transaction.getInt(Transaction.F.Count);
             if (!itemNo.equals(lastItemNo)) {
                 no = 1;
                 lastItemNo = itemNo;
             }
-
-            model.setValueAt(no, row, 0);
+            
+            if (count == 1)
+            {
+                model.setValueAt(no, row, 0);
+            }
+            else
+            {
+                model.setValueAt(no + " - " + (no+count-1), row, 0);
+            }
             model.setValueAt(
                     transaction.getString(Transaction.F.Date)
                     + "," + transaction.getString(Transaction.F.TransactionID),
@@ -1108,8 +1166,10 @@ public class TransactionDialog extends javax.swing.JDialog {
                     + "," + transaction.getString(Transaction.F.CustomerName),
                     row, 3);
             row += 1;
-            no += 1;
+            no += count;
         }
+        
+        model.setRowCount(row);
 
         int amountOfTheDate = TransactionD.get().getAmountNonRkapOfTheDate(transactionDate);
         amountOfTheDateBox.setText(Tool.formatMoney(amountOfTheDate));

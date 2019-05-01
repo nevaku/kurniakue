@@ -32,7 +32,8 @@ public class MailSender {
     private static String toMe;
 
     public static void main(String[] args) {
-        initMailSender();
+//        initMailSender();
+        initGmailSender();
         sendEmail(toMe, "Test from Java Application ", "Assalaamualaikum");
     }
     
@@ -52,10 +53,25 @@ public class MailSender {
         fromMe = config.getProperty("mail.from.me");
         toMe = config.getProperty("mail.to.me");
     }
+    
+    public static void initGmailSender() {
+        config.load("c:/harun/cfg/mail.conf");
+        
+        props = new Properties();
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true"); //TLS
+        
+        userMail = config.getProperty("mail.user");
+        pwdMail = config.getProperty("mail.pwd");
+        fromMe = config.getProperty("mail.from.me");
+        toMe = config.getProperty("mail.to.me");
+    }
 
     public static void sendEmail(String to, String subject, String content) throws RuntimeException {
         try {
-            Session session = Session.getDefaultInstance(props, authenticator);
+            Session session = Session.getInstance(props, authenticator);
 
             Message message = new MimeMessage(session);
             InternetAddress[] myEmail = InternetAddress.parse(fromMe);

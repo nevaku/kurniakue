@@ -56,7 +56,8 @@ public class TrxDbReader {
 
     public static void processBillFromDb(Calendar calendar, String baseDir) {
 
-        MailSender.initMailSender();
+//        MailSender.initMailSender();
+        MailSender.initGmailSender();
         CustomerDialog.init();
         EmailDialog.init();
 

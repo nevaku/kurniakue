@@ -143,7 +143,8 @@ public class TransactionD extends Persistor {
                     .append(F.ItemNo.name(), new BasicDBObject("$ne", "RKAP"))
             );
         }
-        cursor.sort(new BasicDBObject(F.TransactionID.name(), 1));
+        cursor.sort(new BasicDBObject(F.ItemNo.name(), 1)
+                .append(F.TransactionID.name(), 1));
 
         while (cursor.hasNext()) {
             DBObject dbobject = cursor.next();
